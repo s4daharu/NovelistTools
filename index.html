@@ -7,7 +7,7 @@
   <title>Novelist Tools</title>
 
   <!-- PWA Manifest & Theme Color -->
-  <link rel="manifest" href="/assets/manifest-CN12E4UG.json">
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#111111">
 
   <!-- iOS specific meta tags for a more app-like feel when added to homescreen -->
@@ -20,7 +20,7 @@
 
 
   <!-- Link to external CSS file -->
-
+  <link rel="stylesheet" href="index.css">
 
 <script type="importmap">
 {
@@ -36,8 +36,7 @@
   }
 }
 </script>
-  <script type="module" crossorigin src="/assets/index-DhFh_EXg.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-YF7hRTqg.css">
+<link rel="stylesheet" href="/index.css">
 </head>
 
 <body>
@@ -441,6 +440,8 @@
     It should be served locally.
   -->
   <script src="jszip.min.js"></script> <!-- Ensure jszip.min.js is in the root or update path -->
- <!-- Changed from index.tsx to index.js -->
+
+  <script type="module" src="index.js"></script> <!-- Changed from index.tsx to index.js -->
+<script type="module" src="/index.tsx"></script>
 </body>
 </html>
