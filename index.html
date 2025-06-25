@@ -36,7 +36,7 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+
 </head>
 
 <body>
@@ -183,6 +183,8 @@
       <input type="text" id="createUniqueCode" placeholder="Leave blank to generate automatically">
       <label for="createChapters">Number of Chapters:</label>
       <input type="number" id="createChapters" min="1" value="3">
+      <label for="createStartNumber">Start Number:</label>
+      <input type="number" id="createStartNumber" min="1" value="1">
       <label for="createPrefix">Prefix for Chapter Titles:</label>
       <input type="text" id="createPrefix" placeholder="e.g., Chapter ">
       <button id="createNewBackupBtn" class="btn btn-primary">Generate and Download</button>
@@ -281,30 +283,47 @@
     <!-- Find & Replace in Backup File -->
     <div id="findReplaceBackupApp" class="card tool-section" style="display:none;">
       <h1>Find & Replace in Backup File</h1>
-      <label for="frBackupFile">Upload Backup File:</label>
+      
+      <label for="frBackupFile" id="frBackupFileLabel">Upload Backup File:</label>
       <input type="file" id="frBackupFile" accept=".json,.txt,.nov" aria-labelledby="frBackupFileLabel">
       <div class="filename-display-area">
             <span id="frBackupFileName"></span>
             <button type="button" id="clearFrBackupFile" class="clear-file-btn" aria-label="Clear backup file" style="display:none;">&times;</button>
       </div>
-      <label for="findPattern">Find Pattern:</label>
-      <input type="text" id="findPattern" placeholder="Enter search term or regex">
+
+      <label for="findPattern" style="margin-top: 15px;">Find Pattern:</label>
+      <textarea id="findPattern" placeholder="Enter search term or regex" rows="2"></textarea>
+      
+      <div class="fr-options-group" style="margin-top: 10px; margin-bottom: 10px; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap:10px;">
+        <label class="checkbox-label-wrapper" for="useRegexBackup"><input type="checkbox" id="useRegexBackup"> Use Regex</label>
+        <label class="checkbox-label-wrapper" for="frCaseSensitiveCheckbox"><input type="checkbox" id="frCaseSensitiveCheckbox"> Case Sensitive</label>
+        <label class="checkbox-label-wrapper" for="frWholeWordCheckbox"><input type="checkbox" id="frWholeWordCheckbox"> Match Whole Word</label>
+      </div>
+
       <label for="replaceText">Replacement Text:</label>
-      <input type="text" id="replaceText" placeholder="Enter replacement text">
-      <label class="checkbox-label-wrapper" for="useRegexBackup"><input type="checkbox" id="useRegexBackup"> Use Regular Expressions</label>
-      <div style="display:flex; gap:10px; margin:15px 0;">
-        <button id="findPreviousBtn" class="btn btn-primary">Find Previous</button>
-        <button id="findNextBtn" class="btn btn-primary">Find Next</button>
+      <textarea id="replaceText" placeholder="Enter replacement text" rows="2"></textarea>
+      
+      <div class="fr-action-buttons-grid" style="margin-top: 15px;">
+        <button id="findPreviousBtn" class="btn btn-primary fr-btn">↑ Find Previous</button>
+        <button id="findNextBtn" class="btn btn-primary fr-btn">Find Next ↓</button>
+        <button id="replaceNextBtn" class="btn btn-primary fr-btn">Replace This</button>
       </div>
-      <div style="display:flex; gap:10px; margin-bottom:15px;">
-        <button id="replaceNextBtn" class="btn btn-primary">Replace This</button>
-        <button id="replaceAllBtn" class="btn btn-primary">Replace All & Download</button>
+      <div class="fr-action-buttons-grid" style="margin-top: 10px;">
+        <button id="replaceAllBtn" class="btn btn-accent fr-btn">Replace All &amp; Download</button>
+        <button id="downloadCurrentFrBackupBtn" class="btn btn-accent fr-btn" disabled>Download Current Backup</button>
       </div>
-      <div id="currentMatchDisplay" style="
-           background:#2e2e2e; padding:12px; border-radius:8px;
-           min-height:50px; white-space:pre-wrap; color:#e0e0e0;" aria-live="polite">
+
+      <div id="frMatchInfoArea" class="fr-match-info" style="margin-top: 15px;">
+          <div class="match-context">
+              <span class="match-info-label">Scene:</span> <span id="frMatchSceneTitle">N/A</span>
+              <span class="match-info-label" style="margin-left: 15px;">Block:</span> <span id="frMatchBlockIndex">N/A</span>
+          </div>
+          <div class="match-count-display" id="frMatchCountDisplay" aria-live="polite">0 matches</div>
+      </div>
+      <div id="currentMatchDisplay" class="fr-match-preview" aria-live="polite">
         No match found yet.
       </div>
+      
       <div id="spinnerFindReplaceBackup" class="spinner" role="status" aria-live="polite" aria-label="Loading"></div>
       <div id="statusFindReplaceBackup" class="status" style="display:none;" aria-live="polite"></div>
     </div>
@@ -442,6 +461,6 @@
   <script src="jszip.min.js"></script> <!-- Ensure jszip.min.js is in the root or update path -->
 
   <script type="module" src="index.js"></script> <!-- Changed from index.tsx to index.js -->
-<script type="module" src="/index.tsx"></script>
+
 </body>
 </html>

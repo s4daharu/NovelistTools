@@ -509,8 +509,13 @@ input[type="file"] {
 
 textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 60px; /* Default for most textareas */
 }
+/* Specific textarea heights for Find/Replace */
+#findReplaceBackupApp textarea {
+    min-height: 40px; /* Shorter for find/replace patterns */
+}
+
 
 .btn-primary { background: linear-gradient(135deg, #26c6da, var(--accent-color)); }
 .btn-accent { background: linear-gradient(135deg, #7e57c2, #5e37b5); }
@@ -610,13 +615,86 @@ textarea {
   flex-grow: 1; 
 }
 
-/* Find & Replace Match Highlighting */
+
+/* --- Find & Replace Modernized Styles --- */
+.fr-options-group { /* For Regex, Case Sensitive, Whole Word checkboxes */
+  display: flex;
+  justify-content: space-around; /* Or space-between / flex-start */
+  align-items: center;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  gap: 10px; /* Space between checkbox groups */
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+.fr-options-group .checkbox-label-wrapper {
+  margin-bottom: 0; /* Remove default margin if any from generic checkbox wrapper */
+  padding: 5px; /* Add some padding around each for better touch */
+}
+
+.fr-action-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid */
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.fr-action-buttons-grid .btn.fr-btn { /* Ensure buttons in grid take up available space */
+  width: 100%;
+  max-width: none; /* Override general .btn max-width */
+  margin: 0; /* Override general .btn margin */
+}
+
+
+.fr-match-info {
+  background: rgba(0,0,0,0.1);
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 0.9em;
+  color: var(--secondary-text-color);
+}
+.fr-match-info .match-context {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  flex-wrap: wrap; /* Allow context and count to wrap */
+}
+.fr-match-info .match-info-label {
+  font-weight: 500;
+  color: var(--primary-text-color);
+  margin-right: 5px;
+}
+.fr-match-info .match-count-display {
+  font-style: italic;
+  text-align: right;
+  flex-grow: 1; /* Push to the right if space allows */
+}
+
+
+.fr-match-preview { /* Was #currentMatchDisplay */
+  background: var(--input-background);
+  padding: 12px;
+  border-radius: 8px;
+  min-height: 60px; /* Increased min-height */
+  white-space: pre-wrap; /* Preserve whitespace and newlines */
+  word-wrap: break-word; /* Break long words */
+  color: var(--primary-text-color);
+  font-family: 'Consolas', 'Monaco', monospace; /* Monospace for better alignment of text */
+  font-size: 0.95em;
+  line-height: 1.5;
+  border: 1px solid #383838; /* Subtle border */
+  max-height: 150px; /* Limit height and make scrollable if needed */
+  overflow-y: auto;
+}
+
 .fr-match-highlight {
     background-color: var(--accent-color-darker);
     color: white;
     padding: 1px 0;
     border-radius: 2px;
 }
+/* End Find & Replace Modernized Styles */
+
 
 /* Chapter Selection List Styles */
 .chapter-selection-list {
@@ -649,7 +727,6 @@ textarea {
 
 .chapter-selection-list input[type="checkbox"] {
   /* Inherits from .checkbox-label-wrapper input[type="checkbox"] due to HTML structure */
-  /* If not, copy relevant styles here, especially margin-right */
   margin-right: 12px; 
   flex-shrink: 0; /* Prevent checkbox from shrinking */
 }
@@ -706,15 +783,27 @@ textarea {
     margin-left: -90px;
     font-size: 12px;
   }
-  /* Stack button pairs in Find & Replace tool on mobile for better usability */
-  #findReplaceBackupApp div[style*="display:flex"][style*="gap:10px"] {
+  /* Stack button pairs in Find & Replace tool on mobile for better usability - old rule, new grid might handle this */
+  /* #findReplaceBackupApp div[style*="display:flex"][style*="gap:10px"] {
     flex-direction: column;
-    gap: 0; /* Buttons have their own margins (.btn { margin: 10px auto; }), this prevents excessive spacing */
+    gap: 0; 
   }
   #findReplaceBackupApp div[style*="display:flex"][style*="gap:10px"] .btn {
       margin-top: 5px;
       margin-bottom: 5px;
+  } */
+  .fr-action-buttons-grid {
+    grid-template-columns: 1fr; /* Stack buttons on smaller screens */
   }
+  .fr-options-group {
+    flex-direction: column; /* Stack checkboxes */
+    align-items: flex-start;
+  }
+  .fr-options-group .checkbox-label-wrapper {
+     justify-content: flex-start; /* Align checkbox text to left */
+     width: 100%;
+  }
+
 }
 
 /* Specific adjustments for very small screens, e.g., stacking select all/deselect all */
@@ -732,5 +821,14 @@ textarea {
     margin-right: 0; /* Remove right margin when stacked */
     margin-left: auto; /* Center if they don't fully stretch due to padding/content */
     margin-right: auto;
+  }
+
+  .fr-match-info .match-context {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .fr-match-info .match-count-display {
+    text-align: left;
+    margin-top: 5px;
   }
 }

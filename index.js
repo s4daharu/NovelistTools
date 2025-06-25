@@ -4492,8 +4492,14 @@ init_dist();
 function initializeCreateNewBackup(showAppToast, toggleAppSpinner) {
   const createBtn = document.getElementById("createNewBackupBtn");
   const statusEl = document.getElementById("statusCreateNewBackup");
-  if (!createBtn) {
-    console.error("Create New Backup: 'Generate and Download' button not found. Initialization failed.");
+  const titleInput = document.getElementById("createProjectTitle");
+  const descInput = document.getElementById("createDescription");
+  const codeInputElement = document.getElementById("createUniqueCode");
+  const chaptersInput = document.getElementById("createChapters");
+  const startNumberInput = document.getElementById("createStartNumber");
+  const prefixInput = document.getElementById("createPrefix");
+  if (!createBtn || !titleInput || !descInput || !codeInputElement || !chaptersInput || !startNumberInput || !prefixInput) {
+    console.error("Create New Backup: One or more UI elements not found. Initialization failed.");
     return;
   }
   createBtn.addEventListener("click", async () => {
@@ -4501,20 +4507,28 @@ function initializeCreateNewBackup(showAppToast, toggleAppSpinner) {
     if (statusEl) statusEl.style.display = "none";
     toggleAppSpinner(true);
     try {
-      const titleInput = document.getElementById("createProjectTitle");
-      const descInput = document.getElementById("createDescription");
-      const codeInputElement = document.getElementById("createUniqueCode");
-      const chaptersInput = document.getElementById("createChapters");
-      const prefixInput = document.getElementById("createPrefix");
-      if (!titleInput || !descInput || !codeInputElement || !chaptersInput || !prefixInput) {
-        showAppToast("One or more form elements are missing for Create New Backup.", true);
-        throw new Error("Missing form elements.");
+      const currentTitleInput = document.getElementById("createProjectTitle");
+      const currentDescInput = document.getElementById("createDescription");
+      const currentCodeInputElement = document.getElementById("createUniqueCode");
+      const currentChaptersInput = document.getElementById("createChapters");
+      const currentStartNumberInput = document.getElementById("createStartNumber");
+      const currentPrefixInput = document.getElementById("createPrefix");
+      if (!currentTitleInput || !currentDescInput || !currentCodeInputElement || !currentChaptersInput || !currentStartNumberInput || !currentPrefixInput) {
+        showAppToast("A required form element is missing. Please reload the app.", true);
+        if (statusEl) {
+          statusEl.textContent = "Error: A required form element is missing.";
+          statusEl.className = "status error";
+          statusEl.style.display = "block";
+        }
+        toggleAppSpinner(false);
+        return;
       }
-      const title = titleInput.value;
-      const desc = descInput.value;
-      const codeInputVal = codeInputElement.value.trim();
-      const count = parseInt(chaptersInput.value, 10) || 0;
-      const prefix = prefixInput.value;
+      const title = currentTitleInput.value;
+      const desc = currentDescInput.value;
+      const codeInputVal = currentCodeInputElement.value.trim();
+      const count = parseInt(currentChaptersInput.value, 10) || 0;
+      const startNum = parseInt(currentStartNumberInput.value, 10) || 1;
+      const prefix = currentPrefixInput.value;
       const showTOC = true;
       const autoIndent = false;
       if (!title || count < 1) {
@@ -4524,29 +4538,43 @@ function initializeCreateNewBackup(showAppToast, toggleAppSpinner) {
           statusEl.className = "status error";
           statusEl.style.display = "block";
         }
-        throw new Error("Validation failed for create new backup.");
+        toggleAppSpinner(false);
+        return;
+      }
+      if (startNum < 1) {
+        showAppToast("Start Number must be 1 or greater.", true);
+        if (statusEl) {
+          statusEl.textContent = "Error: Start Number must be 1 or greater.";
+          statusEl.className = "status error";
+          statusEl.style.display = "block";
+        }
+        toggleAppSpinner(false);
+        return;
       }
       const uniqueCode = codeInputVal || Math.floor(Math.random() * 4294967295).toString(16).padStart(8, "0");
       const now = Date.now();
       const scenes = [];
       const sections = [];
-      for (let i = 1; i <= count; i++) {
-        const chapTitle = prefix ? prefix + i : i.toString();
-        const sceneCode = "scene" + i;
+      for (let i = 0; i < count; i++) {
+        const currentChapterNumber = startNum + i;
+        const chapTitle = prefix ? `${prefix}${currentChapterNumber}` : currentChapterNumber.toString();
+        const sceneCode = `scene${currentChapterNumber}`;
+        const sectionCode = `section${currentChapterNumber}`;
         const sceneContent = { blocks: [{ type: "text", align: "left", text: "" }] };
         scenes.push({
           code: sceneCode,
           title: chapTitle,
           text: JSON.stringify(sceneContent),
-          ranking: i,
+          ranking: currentChapterNumber,
           status: "1"
         });
         sections.push({
-          code: "section" + i,
+          code: sectionCode,
           title: chapTitle,
           synopsis: "",
-          ranking: i,
+          ranking: currentChapterNumber,
           section_scenes: [{ code: sceneCode, ranking: 1 }]
+          // Inner ranking of scene within section remains 1
         });
       }
       const backup = {
@@ -4582,13 +4610,11 @@ function initializeCreateNewBackup(showAppToast, toggleAppSpinner) {
       }
       showAppToast("Backup file created successfully.");
     } catch (err) {
-      if (err.message !== "Validation failed for create new backup." && err.message !== "Missing form elements.") {
-        showAppToast(err.message || "Error creating backup.", true);
-        if (statusEl) {
-          statusEl.textContent = `Error: ${err.message || "Could not create backup."}`;
-          statusEl.className = "status error";
-          statusEl.style.display = "block";
-        }
+      showAppToast(err.message || "Error creating backup.", true);
+      if (statusEl) {
+        statusEl.textContent = `Error: ${err.message || "Could not create backup."}`;
+        statusEl.className = "status error";
+        statusEl.style.display = "block";
       }
       console.error("Create New Backup Error:", err);
     } finally {
@@ -5174,340 +5200,151 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
 // ts/find-replace-backup.ts
 init_dist();
 var frData = null;
-var frPtr = { scene: 0, block: 0, offset: 0 };
-var frMatch = null;
-function displayMatchText(matchDisplayElement, matchDetails) {
-  if (!matchDisplayElement) return;
-  if (matchDetails) {
-    const line = matchDetails.matchLine;
-    let displayLine = line;
-    const matchStartIndexInLine = line.indexOf(matchDetails.matchedText);
-    if (matchStartIndexInLine !== -1) {
-      const before = escapeHtml(line.substring(0, matchStartIndexInLine));
-      const matched = `<span class="fr-match-highlight">${escapeHtml(line.substring(matchStartIndexInLine, matchStartIndexInLine + matchDetails.matchLength))}</span>`;
-      const after = escapeHtml(line.substring(matchStartIndexInLine + matchDetails.matchLength));
-      displayLine = before + matched + after;
-    } else {
-      displayLine = escapeHtml(line);
-    }
-    matchDisplayElement.innerHTML = `Match in "${escapeHtml(matchDetails.chapterTitle)}":<br>${displayLine.replace(/\n/g, "<br>")}`;
-  } else {
-    matchDisplayElement.innerHTML = "No further matches found.";
-  }
-}
+var frAllMatches = [];
+var frCurrentMatchIndex = -1;
+var frLastFindPattern = "";
+var frLastUseRegex = false;
+var frLastCaseSensitive = false;
+var frLastWholeWord = false;
 function escapeHtml(unsafe) {
+  if (typeof unsafe !== "string") return "";
   return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
-function findNextMatch(findPatternValue, useRegexValue, showAppToast) {
-  if (!frData || !frData.revisions || !frData.revisions[0] || !frData.revisions[0].scenes) {
-    console.error("FindNext: frData or scenes array is missing/invalid.");
-    return null;
+function updateMatchDisplay(currentMatchDisplay, matchSceneTitleEl, matchBlockIndexEl, matchCountDisplayEl) {
+  if (!currentMatchDisplay || !matchSceneTitleEl || !matchBlockIndexEl || !matchCountDisplayEl) return;
+  if (frCurrentMatchIndex !== -1 && frAllMatches[frCurrentMatchIndex]) {
+    const match = frAllMatches[frCurrentMatchIndex];
+    matchSceneTitleEl.textContent = escapeHtml(match.chapterTitle);
+    matchBlockIndexEl.textContent = match.blockIndex.toString();
+    matchCountDisplayEl.textContent = `Match ${frCurrentMatchIndex + 1} of ${frAllMatches.length}`;
+    const blockText = match.blockText;
+    const matchStart = match.matchIndexInBlock;
+    const matchEnd = matchStart + match.matchLength;
+    const before = escapeHtml(blockText.substring(0, matchStart));
+    const highlighted = `<span class="fr-match-highlight">${escapeHtml(blockText.substring(matchStart, matchEnd))}</span>`;
+    const after = escapeHtml(blockText.substring(matchEnd));
+    currentMatchDisplay.innerHTML = (before + highlighted + after).replace(/\n/g, "<br>");
+  } else {
+    matchSceneTitleEl.textContent = "N/A";
+    matchBlockIndexEl.textContent = "N/A";
+    if (frAllMatches.length > 0 && frCurrentMatchIndex === -1) {
+      matchCountDisplayEl.textContent = `${frAllMatches.length} matches found`;
+    } else if (frLastFindPattern) {
+      matchCountDisplayEl.textContent = `0 matches found for "${escapeHtml(frLastFindPattern)}"`;
+    } else {
+      matchCountDisplayEl.textContent = "0 matches";
+    }
+    currentMatchDisplay.innerHTML = frLastFindPattern ? "No match found for the current criteria." : "No match found yet.";
   }
-  const scenes = frData.revisions[0].scenes;
-  if (typeof frPtr.scene !== "number" || frPtr.scene < 0) {
-    frPtr = { scene: 0, block: 0, offset: 0 };
-  }
-  if (frPtr.scene >= scenes.length) {
-    return null;
-  }
-  for (let i = frPtr.scene; i < scenes.length; i++) {
-    const currentSceneObject = scenes[i];
-    if (!currentSceneObject) {
-      console.warn(`FindNext: Scene at index ${i} is undefined. Advancing pointer.`);
-      frPtr = { scene: scenes.length, block: 0, offset: 0 };
-      return null;
-    }
-    const sceneTextJSON = currentSceneObject.text;
-    if (typeof sceneTextJSON !== "string") {
-      if (i === frPtr.scene) {
-        frPtr.block = 0;
-        frPtr.offset = 0;
-      }
-      continue;
-    }
-    let sceneContent;
-    try {
-      sceneContent = JSON.parse(sceneTextJSON);
-      if (!Array.isArray(sceneContent.blocks)) sceneContent.blocks = [];
-    } catch (e) {
-      console.warn(`FindNext: Skipping scene "${currentSceneObject.title || "Untitled"}" (index ${i}) due to invalid JSON:`, e.message);
-      if (i === frPtr.scene) {
-        frPtr.block = 0;
-        frPtr.offset = 0;
-      }
-      continue;
-    }
-    const blocks = sceneContent.blocks;
-    for (let j = i === frPtr.scene ? frPtr.block : 0; j < blocks.length; j++) {
-      const currentBlock = blocks[j];
-      if (!currentBlock || currentBlock.type !== "text") {
-        if (i === frPtr.scene && j === frPtr.block) {
-          frPtr.offset = 0;
-          frPtr.block = j + 1;
-        }
-        continue;
-      }
-      const blockText = currentBlock.text || "";
-      let searchStartIndex = 0;
-      if (i === frPtr.scene && j === frPtr.block) {
-        searchStartIndex = frPtr.offset;
-      }
-      if (searchStartIndex >= blockText.length && blockText.length > 0) {
-        if (i === frPtr.scene && j === frPtr.block) {
-          frPtr.offset = 0;
-        }
-        continue;
-      }
-      if (!blockText && findPatternValue) {
-        if (i === frPtr.scene && j === frPtr.block) {
-          frPtr.offset = 0;
-        }
-        continue;
-      }
-      let matchIndex = -1;
-      let matchedTextValue = "";
-      if (blockText || useRegexValue && !findPatternValue) {
-        if (useRegexValue) {
-          try {
-            if (findPatternValue === void 0 || findPatternValue === null) {
-              showAppToast("Regex pattern is undefined.", true);
-              return null;
-            }
-            const rx = new RegExp(findPatternValue, "g");
-            rx.lastIndex = searchStartIndex;
-            const m = rx.exec(blockText);
-            if (m) {
-              matchIndex = m.index;
-              matchedTextValue = m[0];
-            }
-          } catch (err) {
-            showAppToast("Invalid regular expression.", true);
-            return null;
-          }
-        } else {
-          if (findPatternValue) {
-            matchIndex = blockText.indexOf(findPatternValue, searchStartIndex);
-            if (matchIndex !== -1) matchedTextValue = findPatternValue;
-          }
-        }
-      }
-      if (matchIndex !== -1) {
-        const lines = blockText.split("\n");
-        let cumulativeLength = 0, lineContent = "";
-        for (const line of lines) {
-          if (matchIndex >= cumulativeLength && matchIndex < cumulativeLength + line.length + 1) {
-            lineContent = line;
-            break;
-          }
-          cumulativeLength += line.length + 1;
-        }
-        frMatch = {
-          sceneIndex: i,
-          blockIndex: j,
-          matchIndex,
-          matchLength: matchedTextValue.length,
-          chapterTitle: currentSceneObject.title,
-          matchLine: lineContent,
-          matchedText: matchedTextValue
-        };
-        frPtr = { scene: i, block: j, offset: matchIndex + matchedTextValue.length };
-        return frMatch;
-      }
-      if (i === frPtr.scene && j === frPtr.block) {
-        frPtr.offset = 0;
-      }
-    }
-    if (i === frPtr.scene) {
-      frPtr.block = 0;
-      frPtr.offset = 0;
-    }
-  }
-  frPtr = { scene: scenes.length, block: 0, offset: 0 };
-  return null;
 }
-function findPreviousMatch(findPatternValue, useRegexValue, showAppToast) {
+function performInitialFind(findPatternValue, useRegexValue, caseSensitiveValue, wholeWordValue, showAppToast) {
   if (!frData || !frData.revisions || !frData.revisions[0] || !frData.revisions[0].scenes) {
-    console.error("FindPrev: frData or scenes array is missing/invalid.");
-    return null;
+    showAppToast("Backup data is not loaded or invalid.", true);
+    return;
   }
+  if (!findPatternValue && !useRegexValue) {
+    showAppToast("Please enter a find pattern.", true);
+    frAllMatches = [];
+    frCurrentMatchIndex = -1;
+    return;
+  }
+  frAllMatches = [];
+  frCurrentMatchIndex = -1;
+  frLastFindPattern = findPatternValue;
+  frLastUseRegex = useRegexValue;
+  frLastCaseSensitive = caseSensitiveValue;
+  frLastWholeWord = wholeWordValue;
   const scenes = frData.revisions[0].scenes;
-  if (typeof frPtr.scene !== "number" || frPtr.scene >= scenes.length) {
-    if (scenes.length > 0) {
-      const lastScene = scenes[scenes.length - 1];
-      let lastBlockIndex = 0;
-      let lastBlockOffset = 0;
-      try {
-        const lastSceneContent = JSON.parse(lastScene.text);
-        if (lastSceneContent.blocks && lastSceneContent.blocks.length > 0) {
-          lastBlockIndex = lastSceneContent.blocks.length - 1;
-          const lastBlock = lastSceneContent.blocks[lastBlockIndex];
-          if (lastBlock && lastBlock.type === "text" && lastBlock.text) {
-            lastBlockOffset = lastBlock.text.length;
-          }
-        }
-      } catch (e) {
-      }
-      frPtr = { scene: scenes.length - 1, block: lastBlockIndex, offset: lastBlockOffset };
-    } else {
-      return null;
-    }
-  }
-  if (frPtr.scene < 0) {
-    return null;
-  }
-  for (let i = frPtr.scene; i >= 0; i--) {
-    const currentSceneObject = scenes[i];
-    if (!currentSceneObject) {
-      console.warn(`FindPrev: Scene at index ${i} is undefined. Advancing pointer.`);
-      frPtr = { scene: -1, block: 0, offset: 0 };
-      return null;
-    }
-    const sceneTextJSON = currentSceneObject.text;
-    if (typeof sceneTextJSON !== "string") {
-      if (i === frPtr.scene) {
-        frPtr.block = 0;
-        frPtr.offset = 0;
-      }
-      continue;
-    }
-    let sceneContent;
+  let regex = null;
+  if (useRegexValue) {
     try {
-      sceneContent = JSON.parse(sceneTextJSON);
-      if (!Array.isArray(sceneContent.blocks)) sceneContent.blocks = [];
-    } catch (e) {
-      console.warn(`FindPrev: Skipping scene "${currentSceneObject.title || "Untitled"}" (index ${i}) due to invalid JSON:`, e.message);
-      if (i === frPtr.scene) {
-        frPtr.block = 0;
-        frPtr.offset = 0;
-      }
-      continue;
+      regex = new RegExp(findPatternValue, `g${caseSensitiveValue ? "" : "i"}`);
+    } catch (err) {
+      showAppToast(`Invalid Regular Expression: ${err.message}`, true);
+      return;
     }
-    const blocks = sceneContent.blocks;
-    if (blocks.length === 0) {
-      if (i === frPtr.scene) {
-        frPtr.block = 0;
-        frPtr.offset = 0;
-      }
-      continue;
-    }
-    let startBlockIndex;
-    if (i < frPtr.scene) {
-      startBlockIndex = blocks.length - 1;
-    } else {
-      startBlockIndex = frPtr.block;
-      if (startBlockIndex >= blocks.length) startBlockIndex = blocks.length - 1;
-      if (startBlockIndex < 0) {
-        if (i === frPtr.scene) {
-          frPtr.block = -1;
-          frPtr.offset = 0;
-        }
-        continue;
+  } else {
+    if (wholeWordValue) {
+      const escapedPattern = findPatternValue.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      try {
+        regex = new RegExp(`\\b${escapedPattern}\\b`, `g${caseSensitiveValue ? "" : "i"}`);
+      } catch (err) {
+        showAppToast(`Error creating whole word regex: ${err.message}`, true);
+        return;
       }
     }
-    for (let j = startBlockIndex; j >= 0; j--) {
-      const currentBlock = blocks[j];
-      if (!currentBlock || currentBlock.type !== "text") {
-        if (i === frPtr.scene && j === frPtr.block) {
-          frPtr.offset = 0;
-        }
-        continue;
-      }
-      const blockText = currentBlock.text || "";
-      let searchEndOffset;
-      if (i === frPtr.scene && j === frPtr.block) {
-        searchEndOffset = frPtr.offset;
-      } else {
-        searchEndOffset = blockText.length;
-      }
-      if (searchEndOffset <= 0 && blockText.length > 0) {
-        if (i === frPtr.scene && j === frPtr.block) {
-          frPtr.offset = 0;
-        }
-        continue;
-      }
-      if (!blockText && findPatternValue) {
-        if (i === frPtr.scene && j === frPtr.block) {
-          frPtr.offset = 0;
-        }
-        continue;
-      }
-      let matchIndex = -1;
-      let matchedTextValue = "";
-      if (blockText || useRegexValue && !findPatternValue) {
-        if (useRegexValue) {
-          try {
-            if (findPatternValue === void 0 || findPatternValue === null) {
-              showAppToast("Regex pattern is undefined.", true);
-              return null;
+  }
+  scenes.forEach((scene, sceneIdx) => {
+    if (!scene || typeof scene.text !== "string") return;
+    try {
+      const sceneContent = JSON.parse(scene.text);
+      if (!sceneContent.blocks || !Array.isArray(sceneContent.blocks)) return;
+      sceneContent.blocks.forEach((block, blockIdx) => {
+        if (block.type !== "text" || typeof block.text !== "string" || !block.text) return;
+        const blockText = block.text;
+        let matchResult;
+        if (regex) {
+          while ((matchResult = regex.exec(blockText)) !== null) {
+            frAllMatches.push({
+              sceneIndex: sceneIdx,
+              blockIndex: blockIdx,
+              matchIndexInBlock: matchResult.index,
+              matchLength: matchResult[0].length,
+              chapterTitle: scene.title,
+              blockText,
+              matchedText: matchResult[0]
+            });
+            if (regex.lastIndex === matchResult.index && matchResult[0].length === 0) {
+              regex.lastIndex++;
             }
-            const rx = new RegExp(findPatternValue, "g");
-            let lastMatchResult = null;
-            let currentMatchRegexResult;
-            while ((currentMatchRegexResult = rx.exec(blockText)) !== null) {
-              if (currentMatchRegexResult.index < searchEndOffset) {
-                lastMatchResult = currentMatchRegexResult;
-              } else {
-                break;
-              }
-              if (rx.lastIndex === currentMatchRegexResult.index && findPatternValue) rx.lastIndex++;
-              else if (rx.lastIndex === currentMatchRegexResult.index && !findPatternValue) break;
-            }
-            if (lastMatchResult) {
-              matchIndex = lastMatchResult.index;
-              matchedTextValue = lastMatchResult[0];
-            }
-          } catch (err) {
-            showAppToast("Invalid regular expression.", true);
-            return null;
           }
         } else {
-          if (findPatternValue && searchEndOffset > 0) {
-            let effectiveSearchStartForLastIndexOf = searchEndOffset;
-            if (findPatternValue.length > 0) {
-              effectiveSearchStartForLastIndexOf = searchEndOffset - findPatternValue.length;
-            } else {
-              effectiveSearchStartForLastIndexOf = searchEndOffset - 1;
+          let searchFromIndex = 0;
+          let foundIndex;
+          const patternToSearch = caseSensitiveValue ? findPatternValue : findPatternValue.toLowerCase();
+          const textToSearchIn = caseSensitiveValue ? blockText : blockText.toLowerCase();
+          while ((foundIndex = textToSearchIn.indexOf(patternToSearch, searchFromIndex)) !== -1) {
+            if (findPatternValue.length === 0 && foundIndex === searchFromIndex) {
+              frAllMatches.push({
+                sceneIndex: sceneIdx,
+                blockIndex: blockIdx,
+                matchIndexInBlock: foundIndex,
+                matchLength: 0,
+                chapterTitle: scene.title,
+                blockText,
+                matchedText: ""
+              });
+              searchFromIndex = foundIndex + 1;
+              if (searchFromIndex > blockText.length) break;
+              continue;
             }
-            if (effectiveSearchStartForLastIndexOf >= 0) {
-              matchIndex = blockText.lastIndexOf(findPatternValue, effectiveSearchStartForLastIndexOf);
+            if (findPatternValue.length === 0) {
+              searchFromIndex++;
+              if (searchFromIndex > blockText.length) break;
+              continue;
             }
-            if (matchIndex !== -1) matchedTextValue = findPatternValue;
+            frAllMatches.push({
+              sceneIndex: sceneIdx,
+              blockIndex: blockIdx,
+              matchIndexInBlock: foundIndex,
+              matchLength: findPatternValue.length,
+              chapterTitle: scene.title,
+              blockText,
+              matchedText: blockText.substring(foundIndex, foundIndex + findPatternValue.length)
+            });
+            searchFromIndex = foundIndex + findPatternValue.length;
           }
         }
-      }
-      if (matchIndex !== -1) {
-        const lines = blockText.split("\n");
-        let cumulativeLength = 0, lineContent = "";
-        for (const line of lines) {
-          if (matchIndex >= cumulativeLength && matchIndex < cumulativeLength + line.length + 1) {
-            lineContent = line;
-            break;
-          }
-          cumulativeLength += line.length + 1;
-        }
-        frMatch = {
-          sceneIndex: i,
-          blockIndex: j,
-          matchIndex,
-          matchLength: matchedTextValue.length,
-          chapterTitle: currentSceneObject.title,
-          matchLine: lineContent,
-          matchedText: matchedTextValue
-        };
-        frPtr = { scene: i, block: j, offset: matchIndex };
-        return frMatch;
-      }
-      if (i === frPtr.scene && j === frPtr.block) {
-        frPtr.offset = 0;
-      }
+      });
+    } catch (e) {
+      console.warn(`Skipping scene "${scene.title || "Untitled"}" due to invalid JSON during find:`, e);
     }
-    if (i === frPtr.scene) {
-      frPtr.block = -1;
-      frPtr.offset = 0;
-    }
+  });
+  if (frAllMatches.length > 0) {
+    showAppToast(`${frAllMatches.length} match(es) found.`);
+  } else {
+    showAppToast(`No matches found for "${escapeHtml(findPatternValue)}".`);
   }
-  frPtr = { scene: -1, block: 0, offset: 0 };
-  return null;
 }
 function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
   const frBackupFileInput = document.getElementById("frBackupFile");
@@ -5515,27 +5352,37 @@ function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
   const clearFrBackupFileBtn = document.getElementById("clearFrBackupFile");
   const findPatternInput = document.getElementById("findPattern");
   const useRegexCheckbox = document.getElementById("useRegexBackup");
-  const currentMatchDisplay = document.getElementById("currentMatchDisplay");
+  const caseSensitiveCheckbox = document.getElementById("frCaseSensitiveCheckbox");
+  const wholeWordCheckbox = document.getElementById("frWholeWordCheckbox");
   const replaceTextInput = document.getElementById("replaceText");
   const findNextBtn = document.getElementById("findNextBtn");
   const findPreviousBtn = document.getElementById("findPreviousBtn");
   const replaceNextBtn = document.getElementById("replaceNextBtn");
   const replaceAllBtn = document.getElementById("replaceAllBtn");
+  const downloadCurrentFrBackupBtn = document.getElementById("downloadCurrentFrBackupBtn");
+  const currentMatchDisplay = document.getElementById("currentMatchDisplay");
+  const matchSceneTitleEl = document.getElementById("frMatchSceneTitle");
+  const matchBlockIndexEl = document.getElementById("frMatchBlockIndex");
+  const matchCountDisplayEl = document.getElementById("frMatchCountDisplay");
   const statusEl = document.getElementById("statusFindReplaceBackup");
-  if (!frBackupFileInput || !frBackupFileNameEl || !clearFrBackupFileBtn || !findPatternInput || !useRegexCheckbox || !currentMatchDisplay || !replaceTextInput || !findNextBtn || !findPreviousBtn || !replaceNextBtn || !replaceAllBtn) {
+  if (!frBackupFileInput || !frBackupFileNameEl || !clearFrBackupFileBtn || !findPatternInput || !useRegexCheckbox || !caseSensitiveCheckbox || !wholeWordCheckbox || !replaceTextInput || !findNextBtn || !findPreviousBtn || !replaceNextBtn || !replaceAllBtn || !downloadCurrentFrBackupBtn || !currentMatchDisplay || !matchSceneTitleEl || !matchBlockIndexEl || !matchCountDisplayEl || !statusEl) {
     console.error("Find & Replace Backup: One or more UI elements not found. Initialization failed.");
     return;
   }
-  function resetFrState() {
-    frData = null;
-    frMatch = null;
-    frPtr = { scene: 0, block: 0, offset: 0 };
-    displayMatchText(currentMatchDisplay, null);
+  function resetFrState(fullReset = true) {
+    if (fullReset) {
+      frData = null;
+      frLastFindPattern = "";
+    }
+    frAllMatches = [];
+    frCurrentMatchIndex = -1;
+    updateMatchDisplay(currentMatchDisplay, matchSceneTitleEl, matchBlockIndexEl, matchCountDisplayEl);
     if (statusEl) statusEl.style.display = "none";
+    if (downloadCurrentFrBackupBtn) downloadCurrentFrBackupBtn.disabled = !frData;
   }
   frBackupFileInput.addEventListener("change", (e) => {
     const target = e.target;
-    resetFrState();
+    resetFrState(true);
     if (!target.files || !target.files.length) {
       frBackupFileNameEl.textContent = "";
       if (clearFrBackupFileBtn) clearFrBackupFileBtn.style.display = "none";
@@ -5549,33 +5396,33 @@ function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
       try {
         frData = JSON.parse(event.target?.result);
         if (!frData.revisions || !frData.revisions[0] || !Array.isArray(frData.revisions[0].scenes)) {
-          throw new Error("Invalid backup structure for Find & Replace (missing scenes array).");
+          throw new Error("Invalid backup structure (missing scenes array).");
         }
-        showAppToast("Backup file loaded for Find & Replace.");
+        showAppToast("Backup file loaded.");
+        if (downloadCurrentFrBackupBtn) downloadCurrentFrBackupBtn.disabled = false;
       } catch (err) {
-        showAppToast(err.message || "Error loading F&R backup.", true);
+        showAppToast(err.message || "Error loading backup.", true);
         if (statusEl) {
           statusEl.textContent = `Error: ${err.message || "Could not load backup."}`;
           statusEl.className = "status error";
           statusEl.style.display = "block";
         }
-        resetFrState();
+        resetFrState(true);
         frBackupFileNameEl.textContent = "";
         if (clearFrBackupFileBtn) clearFrBackupFileBtn.style.display = "none";
         frBackupFileInput.value = "";
-        console.error("F&R Load Error:", err);
       } finally {
         toggleAppSpinner(false);
       }
     };
     reader.onerror = () => {
-      showAppToast("Error reading F&R backup file.", true);
+      showAppToast("Error reading backup file.", true);
       if (statusEl) {
         statusEl.textContent = "Error: Could not read backup file.";
         statusEl.className = "status error";
         statusEl.style.display = "block";
       }
-      resetFrState();
+      resetFrState(true);
       frBackupFileNameEl.textContent = "";
       if (clearFrBackupFileBtn) clearFrBackupFileBtn.style.display = "none";
       frBackupFileInput.value = "";
@@ -5587,77 +5434,87 @@ function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
     frBackupFileInput.value = "";
     frBackupFileNameEl.textContent = "";
     clearFrBackupFileBtn.style.display = "none";
-    resetFrState();
+    resetFrState(true);
   });
-  findNextBtn.addEventListener("click", () => {
+  useRegexCheckbox.addEventListener("change", () => {
+    wholeWordCheckbox.disabled = useRegexCheckbox.checked;
+    if (useRegexCheckbox.checked) {
+      wholeWordCheckbox.checked = false;
+    }
+    resetFrState(false);
+  });
+  caseSensitiveCheckbox.addEventListener("change", () => resetFrState(false));
+  wholeWordCheckbox.addEventListener("change", () => resetFrState(false));
+  findPatternInput.addEventListener("input", () => resetFrState(false));
+  function handleFind(direction) {
     if (Capacitor.isNativePlatform()) Haptics.impact({ style: ImpactStyle.Light });
     if (statusEl) statusEl.style.display = "none";
     if (!frData) {
-      showAppToast("Upload a backup file first for Find & Replace.", true);
+      showAppToast("Upload a backup file first.", true);
       return;
     }
     const pattern = findPatternInput.value;
     const useRegex = useRegexCheckbox.checked;
-    if (!pattern && !useRegex) {
-      showAppToast("Enter a find pattern.", true);
+    const caseSensitive = caseSensitiveCheckbox.checked;
+    const wholeWord = wholeWordCheckbox.checked && !useRegex;
+    if (pattern !== frLastFindPattern || useRegex !== frLastUseRegex || caseSensitive !== frLastCaseSensitive || wholeWord !== frLastWholeWord || frAllMatches.length === 0 && pattern) {
+      performInitialFind(pattern, useRegex, caseSensitive, wholeWord, showAppToast);
+    }
+    if (frAllMatches.length === 0) {
+      updateMatchDisplay(currentMatchDisplay, matchSceneTitleEl, matchBlockIndexEl, matchCountDisplayEl);
       return;
     }
-    const match = findNextMatch(pattern, useRegex, showAppToast);
-    displayMatchText(currentMatchDisplay, match);
-    if (!match && frData && frData.revisions[0] && frPtr.scene >= frData.revisions[0].scenes.length) {
-      showAppToast("Reached end of document.", false);
+    if (direction === "next") {
+      if (frCurrentMatchIndex < frAllMatches.length - 1) {
+        frCurrentMatchIndex++;
+      } else {
+        showAppToast("Reached end of document. Looping to start.", false);
+        frCurrentMatchIndex = 0;
+      }
+    } else {
+      if (frCurrentMatchIndex > 0) {
+        frCurrentMatchIndex--;
+      } else {
+        showAppToast("Reached beginning of document. Looping to end.", false);
+        frCurrentMatchIndex = frAllMatches.length - 1;
+      }
     }
-  });
-  findPreviousBtn.addEventListener("click", () => {
-    if (Capacitor.isNativePlatform()) Haptics.impact({ style: ImpactStyle.Light });
-    if (statusEl) statusEl.style.display = "none";
-    if (!frData) {
-      showAppToast("Upload a backup file first for Find & Replace.", true);
-      return;
-    }
-    const pattern = findPatternInput.value;
-    const useRegex = useRegexCheckbox.checked;
-    if (!pattern && !useRegex) {
-      showAppToast("Enter a find pattern.", true);
-      return;
-    }
-    const match = findPreviousMatch(pattern, useRegex, showAppToast);
-    displayMatchText(currentMatchDisplay, match);
-    if (!match && frPtr.scene < 0) {
-      showAppToast("Reached beginning of document.", false);
-    }
-  });
+    updateMatchDisplay(currentMatchDisplay, matchSceneTitleEl, matchBlockIndexEl, matchCountDisplayEl);
+  }
+  findNextBtn.addEventListener("click", () => handleFind("next"));
+  findPreviousBtn.addEventListener("click", () => handleFind("previous"));
   replaceNextBtn.addEventListener("click", () => {
     if (Capacitor.isNativePlatform()) Haptics.impact({ style: ImpactStyle.Light });
     if (statusEl) statusEl.style.display = "none";
-    if (!frData || !frMatch) {
+    if (!frData || frCurrentMatchIndex === -1 || !frAllMatches[frCurrentMatchIndex]) {
       showAppToast('No current match to replace. Use "Find Next" first.', true);
       return;
     }
     try {
+      const currentMatch = frAllMatches[frCurrentMatchIndex];
       const replacementText = replaceTextInput.value;
-      const scene = frData.revisions[0].scenes[frMatch.sceneIndex];
+      const scene = frData.revisions[0].scenes[currentMatch.sceneIndex];
       const parsedSceneContent = JSON.parse(scene.text);
-      const targetBlock = parsedSceneContent.blocks[frMatch.blockIndex];
+      const targetBlock = parsedSceneContent.blocks[currentMatch.blockIndex];
       if (targetBlock.type !== "text" || typeof targetBlock.text !== "string") {
         showAppToast("Cannot replace in non-text block.", true);
         return;
       }
-      const originalBlockText = targetBlock.text || "";
-      const textBeforeMatch = originalBlockText.substring(0, frMatch.matchIndex);
-      const textAfterMatch = originalBlockText.substring(frMatch.matchIndex + frMatch.matchLength);
+      const originalBlockText = targetBlock.text;
+      const textBeforeMatch = originalBlockText.substring(0, currentMatch.matchIndexInBlock);
+      const textAfterMatch = originalBlockText.substring(currentMatch.matchIndexInBlock + currentMatch.matchLength);
       targetBlock.text = textBeforeMatch + replacementText + textAfterMatch;
       scene.text = JSON.stringify(parsedSceneContent);
       showAppToast("Match replaced.", false);
-      frPtr = { scene: frMatch.sceneIndex, block: frMatch.blockIndex, offset: frMatch.matchIndex + replacementText.length };
-      frMatch = null;
-      const pattern = findPatternInput.value;
-      const useRegex = useRegexCheckbox.checked;
-      const nextMatchToShow = findNextMatch(pattern, useRegex, showAppToast);
-      displayMatchText(currentMatchDisplay, nextMatchToShow);
-      if (!nextMatchToShow && frData.revisions[0] && frPtr.scene >= frData.revisions[0].scenes.length) {
-        showAppToast("Reached end of document.", false);
+      const oldMatchGlobalIndex = frCurrentMatchIndex;
+      performInitialFind(findPatternInput.value, useRegexCheckbox.checked, caseSensitiveCheckbox.checked, wholeWordCheckbox.checked && !useRegexCheckbox.checked, showAppToast);
+      if (frAllMatches.length > 0) {
+        frCurrentMatchIndex = Math.min(oldMatchGlobalIndex, frAllMatches.length - 1);
+        if (frCurrentMatchIndex < 0 && frAllMatches.length > 0) frCurrentMatchIndex = 0;
+      } else {
+        frCurrentMatchIndex = -1;
       }
+      updateMatchDisplay(currentMatchDisplay, matchSceneTitleEl, matchBlockIndexEl, matchCountDisplayEl);
     } catch (err) {
       showAppToast(err.message || "Error replacing text.", true);
       console.error("Replace Next Error:", err);
@@ -5673,30 +5530,68 @@ function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
     const findPattern = findPatternInput.value;
     const replacementText = replaceTextInput.value;
     const useRegex = useRegexCheckbox.checked;
+    const caseSensitive = caseSensitiveCheckbox.checked;
+    const wholeWord = wholeWordCheckbox.checked && !useRegex;
     if (!findPattern && !useRegex) {
       showAppToast("Enter a find pattern.", true);
+      return;
+    }
+    if (!findPattern && useRegex && findPattern.length === 0 && replacementText.length === 0) {
+      showAppToast("Replacing empty regex match with empty string can be risky. Aborting.", true);
       return;
     }
     toggleAppSpinner(true);
     try {
       const rev = frData.revisions[0];
-      let replacementsMade = false;
-      const replacerRegex = useRegex ? new RegExp(findPattern, "g") : null;
+      let totalReplacementsMade = 0;
+      let regex = null;
+      if (useRegex) {
+        regex = new RegExp(findPattern, `g${caseSensitive ? "" : "i"}`);
+      } else if (wholeWord) {
+        const escapedPattern = findPattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        regex = new RegExp(`\\b${escapedPattern}\\b`, `g${caseSensitive ? "" : "i"}`);
+      }
       rev.scenes.forEach((scene) => {
         try {
           const sceneContent = JSON.parse(scene.text);
           sceneContent.blocks.forEach((block) => {
-            if (block.type === "text" && typeof block.text === "string") {
+            if (block.type === "text" && typeof block.text === "string" && block.text) {
               const originalText = block.text;
-              if (useRegex && replacerRegex) {
-                block.text = block.text.replace(replacerRegex, replacementText);
-              } else if (!useRegex && findPattern.length > 0) {
-                block.text = block.text.split(findPattern).join(replacementText);
-              } else if (!useRegex && findPattern.length === 0) {
+              let newText = originalText;
+              if (regex) {
+                newText = originalText.replace(regex, (match) => {
+                  totalReplacementsMade++;
+                  return replacementText;
+                });
+              } else {
+                const patternToSearch = caseSensitive ? findPattern : findPattern.toLowerCase();
+                const textToSearchIn = caseSensitive ? originalText : originalText.toLowerCase();
+                let result = "";
+                let lastIndex = 0;
+                let foundIndex;
+                if (patternToSearch.length === 0) {
+                  if (replacementText.length > 0) {
+                    for (let k = 0; k < originalText.length; k++) {
+                      result += replacementText + originalText[k];
+                      totalReplacementsMade++;
+                    }
+                    result += replacementText;
+                    totalReplacementsMade++;
+                    newText = result;
+                  } else {
+                    newText = originalText;
+                  }
+                } else {
+                  while ((foundIndex = textToSearchIn.indexOf(patternToSearch, lastIndex)) !== -1) {
+                    result += originalText.substring(lastIndex, foundIndex) + replacementText;
+                    lastIndex = foundIndex + findPattern.length;
+                    totalReplacementsMade++;
+                  }
+                  result += originalText.substring(lastIndex);
+                  newText = result;
+                }
               }
-              if (block.text !== originalText) {
-                replacementsMade = true;
-              }
+              block.text = newText;
             }
           });
           scene.text = JSON.stringify(sceneContent);
@@ -5711,17 +5606,47 @@ function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
       const blob = new Blob([JSON.stringify(frData, null, 2)], { type: "application/json" });
       const filename = `${frData.title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "replaced_backup"}.json`;
       await triggerDownload(blob, filename, "application/json", showAppToast);
-      if (replacementsMade) {
-        showAppToast(`Replace All complete. Content updated. Download started.`);
-      } else {
-        showAppToast(`Replace All complete. No changes made (pattern not found or replacement is same). Download started.`);
-      }
-      frMatch = null;
-      frPtr = { scene: 0, block: 0, offset: 0 };
-      displayMatchText(currentMatchDisplay, null);
+      showAppToast(`Replace All complete. ${totalReplacementsMade} replacement(s) made. Download started.`);
+      resetFrState(false);
     } catch (err) {
       showAppToast(err.message || "Error during Replace All.", true);
       console.error("Replace All Error:", err);
+    } finally {
+      toggleAppSpinner(false);
+    }
+  });
+  downloadCurrentFrBackupBtn.addEventListener("click", async () => {
+    if (Capacitor.isNativePlatform()) Haptics.impact({ style: ImpactStyle.Light });
+    if (statusEl) statusEl.style.display = "none";
+    if (!frData) {
+      showAppToast("No backup file loaded to download.", true);
+      return;
+    }
+    toggleAppSpinner(true);
+    try {
+      const now = Date.now();
+      frData.last_update_date = now;
+      frData.last_backup_date = now;
+      if (frData.revisions && frData.revisions[0]) {
+        frData.revisions[0].date = now;
+      }
+      const blob = new Blob([JSON.stringify(frData, null, 2)], { type: "application/json" });
+      const filename = `${frData.title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "current_backup"}_current.json`;
+      await triggerDownload(blob, filename, "application/json", showAppToast);
+      showAppToast(`Current backup download started: ${filename}`);
+      if (statusEl) {
+        statusEl.textContent = `Current backup download started: ${filename}`;
+        statusEl.className = "status success";
+        statusEl.style.display = "block";
+      }
+    } catch (err) {
+      showAppToast(err.message || "Error downloading current backup.", true);
+      if (statusEl) {
+        statusEl.textContent = `Error: ${err.message || "Could not download current backup."}`;
+        statusEl.className = "status error";
+        statusEl.style.display = "block";
+      }
+      console.error("Download Current Backup Error:", err);
     } finally {
       toggleAppSpinner(false);
     }
