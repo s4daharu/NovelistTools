@@ -36,7 +36,7 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+
 </head>
 
 <body>
@@ -115,8 +115,8 @@
     <!-- EPUB Splitter -->
     <div id="splitterApp" class="card tool-section" style="display:none;">
       <h1>EPUB Chapter Splitter</h1>
-      <div class="upload-section option-group">
-        <label for="epubUpload" class="btn upload-btn" id="epubUploadLabel">Upload EPUB File</label>
+      <div class="upload-section">
+        <label for="epubUpload" class="btn upload-btn">Upload EPUB File</label>
         <input type="file" id="epubUpload" accept=".epub" style="display:none;" aria-labelledby="epubUploadLabel">
         <div class="filename-display-area">
             <span id="epubFileName"></span>
@@ -135,7 +135,7 @@
         </ul>
       </div>
 
-      <div class="option-group mode-section">
+      <div class="mode-section">
         <label for="modeSelect">Output Mode:</label>
         <select id="modeSelect">
           <option value="single">Single Chapter per File</option>
@@ -153,15 +153,15 @@
         </div>
         <div class="option-group">
           <label for="startNumber">Start Number:</label>
-          <input type="number" id="startNumber" min="1" value="1" aria-describedby="statusMessage">
+          <input type="number" id="startNumber" min="1" value="1">
         </div>
         <div class="option-group">
           <label for="offsetNumber">Offset (skip chapters):</label>
-          <input type="number" id="offsetNumber" min="0" value="0" aria-describedby="statusMessage">
+          <input type="number" id="offsetNumber" min="0" value="0">
         </div>
         <div class="option-group" id="groupSizeGroup" style="display:none;">
           <label for="groupSize">Chapters per File:</label>
-          <input type="number" id="groupSize" min="1" value="4" aria-describedby="statusMessage">
+          <input type="number" id="groupSize" min="1" value="4">
         </div>
       </div>
       <button id="splitBtn" class="btn split-btn" disabled>Split EPUB</button>
@@ -175,30 +175,18 @@
     <!-- Create New Backup File -->
     <div id="createNewBackupApp" class="card tool-section" style="display:none;">
       <h1>Create New Backup File</h1>
-      <div class="option-group">
-        <label for="createProjectTitle">Project Title:</label>
-        <input type="text" id="createProjectTitle" placeholder="Enter project title" aria-describedby="statusCreateNewBackup">
-      </div>
-      <div class="option-group">
-        <label for="createDescription">Description:</label>
-        <textarea id="createDescription" placeholder="Enter project description"></textarea>
-      </div>
-      <div class="option-group">
-        <label for="createUniqueCode">Unique Code (Optional):</label>
-        <input type="text" id="createUniqueCode" placeholder="Leave blank to generate automatically">
-      </div>
-      <div class="option-group">
-        <label for="createChapters">Number of Chapters:</label>
-        <input type="number" id="createChapters" min="1" value="3" aria-describedby="statusCreateNewBackup">
-      </div>
-      <div class="option-group">
-        <label for="createStartNumber">Start Number:</label>
-        <input type="number" id="createStartNumber" min="1" value="1" aria-describedby="statusCreateNewBackup">
-      </div>
-      <div class="option-group">
-        <label for="createPrefix">Prefix for Chapter Titles:</label>
-        <input type="text" id="createPrefix" placeholder="e.g., Chapter ">
-      </div>
+      <label for="createProjectTitle">Project Title:</label>
+      <input type="text" id="createProjectTitle" placeholder="Enter project title">
+      <label for="createDescription">Description:</label>
+      <textarea id="createDescription" placeholder="Enter project description"></textarea>
+      <label for="createUniqueCode">Unique Code (Optional):</label>
+      <input type="text" id="createUniqueCode" placeholder="Leave blank to generate automatically">
+      <label for="createChapters">Number of Chapters:</label>
+      <input type="number" id="createChapters" min="1" value="3">
+      <label for="createStartNumber">Start Number:</label>
+      <input type="number" id="createStartNumber" min="1" value="1">
+      <label for="createPrefix">Prefix for Chapter Titles:</label>
+      <input type="text" id="createPrefix" placeholder="e.g., Chapter ">
       <button id="createNewBackupBtn" class="btn btn-primary">Generate and Download</button>
       <div id="spinnerCreateNewBackup" class="spinner" role="status" aria-live="polite" aria-label="Loading"></div>
       <div id="statusCreateNewBackup" class="status" style="display:none;" aria-live="polite"></div>
@@ -207,30 +195,16 @@
     <!-- Extend Existing Backup File -->
     <div id="extendBackupApp" class="card tool-section" style="display:none;">
       <h1>Extend Existing Backup File</h1>
-      <div class="option-group">
-        <label for="extendBackupFile" id="extendBackupFileLabel">Upload Backup File (.json, .nov):</label>
-        <input type="file" id="extendBackupFile" accept=".json,.txt,.nov" aria-labelledby="extendBackupFileLabel">
-         <div class="filename-display-area">
-              <span id="extendBackupFileName"></span>
-              <button type="button" id="clearExtendBackupFile" class="clear-file-btn" aria-label="Clear backup file" style="display:none;">&times;</button>
-          </div>
-      </div>
-      <div class="option-group">
-        <label for="extendExtraChapters">Extra Empty Chapters:</label>
-        <input type="number" id="extendExtraChapters" min="1" value="1" aria-describedby="statusExtendBackup">
-      </div>
-      <div class="option-group">
-        <label for="extendStartNumber">Start Number for New Chapters:
-            <span class="tooltip-trigger" aria-label="More info about Start Number for New Chapters" role="button" tabindex="0">(?)
-              <span class="tooltip-text-popup">Number for the title and code of the first new chapter. E.g., if set to 101, new chapters might be "Chapter 101", "Chapter 102", etc. Ranks are assigned sequentially after existing chapters. Click to dismiss.</span>
-            </span>
-        </label>
-        <input type="number" id="extendStartNumber" min="1" value="1" aria-describedby="statusExtendBackup">
-      </div>
-      <div class="option-group">
-        <label for="extendPrefix">Prefix for New Chapters:</label>
-        <input type="text" id="extendPrefix" placeholder="e.g., Chapter ">
-      </div>
+      <label for="extendBackupFile">Upload Backup File:</label>
+      <input type="file" id="extendBackupFile" accept=".json,.txt,.nov" aria-labelledby="extendBackupFileLabel">
+       <div class="filename-display-area">
+            <span id="extendBackupFileName"></span>
+            <button type="button" id="clearExtendBackupFile" class="clear-file-btn" aria-label="Clear backup file" style="display:none;">&times;</button>
+        </div>
+      <label for="extendExtraChapters">Extra Empty Chapters:</label>
+      <input type="number" id="extendExtraChapters" min="1" value="200">
+      <label for="extendPrefix">Prefix for New Chapters:</label>
+      <input type="text" id="extendPrefix" placeholder="e.g., Chapter ">
       <button id="extendBackupBtn" class="btn btn-primary">Extend and Download</button>
       <div id="spinnerExtendBackup" class="spinner" role="status" aria-live="polite" aria-label="Loading"></div>
       <div id="statusExtendBackup" class="status" style="display:none;" aria-live="polite"></div>
@@ -239,26 +213,18 @@
     <!-- Merge Backup Files -->
     <div id="mergeBackupApp" class="card tool-section" style="display:none;">
       <h1>Merge Backup Files</h1>
-      <div class="option-group">
-        <label for="mergeProjectTitle">Merged Project Title:</label>
-        <input type="text" id="mergeProjectTitle" placeholder="Enter merged project title" aria-describedby="statusMergeBackup">
+      <label for="mergeProjectTitle">Merged Project Title:</label>
+      <input type="text" id="mergeProjectTitle" placeholder="Enter merged project title">
+      <label for="mergeDescription">Merged Description:</label>
+      <textarea id="mergeDescription" placeholder="Enter merged project description"></textarea>
+      <label for="mergeBackupFiles">Upload Backup Files (.json, .nov):</label>
+      <input type="file" id="mergeBackupFiles" accept=".json,.txt,.nov" multiple aria-labelledby="mergeBackupFilesLabel">
+      <div class="filename-display-area" id="mergeBackupFileNamesArea" style="text-align: left; max-height: 100px; overflow-y: auto; background: #252525; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px;">
+            <span id="mergeBackupFileNames">No files selected.</span>
+            <button type="button" id="clearMergeBackupFiles" class="clear-file-btn" aria-label="Clear backup files" style="display:none;">&times;</button>
       </div>
-      <div class="option-group">
-        <label for="mergeDescription">Merged Description:</label>
-        <textarea id="mergeDescription" placeholder="Enter merged project description"></textarea>
-      </div>
-      <div class="option-group">
-        <label for="mergeBackupFiles" id="mergeBackupFilesLabel">Upload Backup Files (.json, .nov):</label>
-        <input type="file" id="mergeBackupFiles" accept=".json,.txt,.nov" multiple aria-labelledby="mergeBackupFilesLabel">
-        <div class="filename-display-area" id="mergeBackupFileNamesArea" style="text-align: left; max-height: 100px; overflow-y: auto; background: #252525; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px;">
-              <span id="mergeBackupFileNames">No files selected.</span>
-              <button type="button" id="clearMergeBackupFiles" class="clear-file-btn" aria-label="Clear backup files" style="display:none;">&times;</button>
-        </div>
-      </div>
-      <div class="option-group">
-        <label for="mergePrefix">Prefix for Chapters (Optional):</label>
-        <input type="text" id="mergePrefix" placeholder="e.g., Part I - ">
-      </div>
+      <label for="mergePrefix">Prefix for Chapters (Optional):</label>
+      <input type="text" id="mergePrefix" placeholder="e.g., Part I - ">
       <div class="option-group">
         <label class="checkbox-label-wrapper" for="mergePreserveTitles">
             <input type="checkbox" id="mergePreserveTitles" /> Preserve Original Chapter Titles
@@ -280,28 +246,22 @@
     <!-- Augment Backup with ZIP -->
     <div id="augmentBackupWithZipApp" class="card tool-section" style="display:none;">
       <h1>Augment Backup with ZIP Chapters</h1>
-      <div class="option-group">
-        <label for="augmentBaseBackupFile" id="augmentBaseBackupFileLabel">Upload Base Backup File (.json, .nov):</label>
-        <input type="file" id="augmentBaseBackupFile" accept=".json,.txt,.nov" aria-labelledby="augmentBaseBackupFileLabel">
-        <div class="filename-display-area">
-              <span id="augmentBaseBackupFileName"></span>
-              <button type="button" id="clearAugmentBaseBackupFile" class="clear-file-btn" aria-label="Clear base backup file" style="display:none;">&times;</button>
-        </div>
+      <label for="augmentBaseBackupFile">Upload Base Backup File (.json, .nov):</label>
+      <input type="file" id="augmentBaseBackupFile" accept=".json,.txt,.nov" aria-labelledby="augmentBaseBackupFileLabel">
+      <div class="filename-display-area">
+            <span id="augmentBaseBackupFileName"></span>
+            <button type="button" id="clearAugmentBaseBackupFile" class="clear-file-btn" aria-label="Clear base backup file" style="display:none;">&times;</button>
       </div>
 
-      <div class="option-group" style="margin-top: 15px;">
-        <label for="augmentZipFile" id="augmentZipFileLabel">Upload ZIP File with Chapters (.zip):</label>
-        <input type="file" id="augmentZipFile" accept=".zip" aria-labelledby="augmentZipFileLabel">
-        <div class="filename-display-area">
-              <span id="augmentZipFileName"></span>
-              <button type="button" id="clearAugmentZipFile" class="clear-file-btn" aria-label="Clear ZIP file" style="display:none;">&times;</button>
-        </div>
+      <label for="augmentZipFile" style="margin-top: 15px;">Upload ZIP File with Chapters (.zip):</label>
+      <input type="file" id="augmentZipFile" accept=".zip" aria-labelledby="augmentZipFileLabel">
+      <div class="filename-display-area">
+            <span id="augmentZipFileName"></span>
+            <button type="button" id="clearAugmentZipFile" class="clear-file-btn" aria-label="Clear ZIP file" style="display:none;">&times;</button>
       </div>
 
-      <div class="option-group" style="margin-top: 15px;">
-        <label for="augmentPrefix">Prefix for New Chapters (from ZIP, Optional):</label>
-        <input type="text" id="augmentPrefix" placeholder="e.g., New Section - ">
-      </div>
+      <label for="augmentPrefix" style="margin-top: 15px;">Prefix for New Chapters (from ZIP, Optional):</label>
+      <input type="text" id="augmentPrefix" placeholder="e.g., New Section - ">
 
       <div class="option-group" style="margin-top: 15px;">
         <label class="checkbox-label-wrapper" for="augmentPreserveTxtTitles">
@@ -324,19 +284,15 @@
     <div id="findReplaceBackupApp" class="card tool-section" style="display:none;">
       <h1>Find & Replace in Backup File</h1>
       
-      <div class="option-group">
-        <label for="frBackupFile" id="frBackupFileLabel">Upload Backup File:</label>
-        <input type="file" id="frBackupFile" accept=".json,.txt,.nov" aria-labelledby="frBackupFileLabel">
-        <div class="filename-display-area">
-              <span id="frBackupFileName"></span>
-              <button type="button" id="clearFrBackupFile" class="clear-file-btn" aria-label="Clear backup file" style="display:none;">&times;</button>
-        </div>
+      <label for="frBackupFile" id="frBackupFileLabel">Upload Backup File:</label>
+      <input type="file" id="frBackupFile" accept=".json,.txt,.nov" aria-labelledby="frBackupFileLabel">
+      <div class="filename-display-area">
+            <span id="frBackupFileName"></span>
+            <button type="button" id="clearFrBackupFile" class="clear-file-btn" aria-label="Clear backup file" style="display:none;">&times;</button>
       </div>
 
-      <div class="option-group" style="margin-top: 15px;">
-        <label for="findPattern">Find Pattern:</label>
-        <textarea id="findPattern" placeholder="Enter search term or regex" rows="2"></textarea>
-      </div>
+      <label for="findPattern" style="margin-top: 15px;">Find Pattern:</label>
+      <textarea id="findPattern" placeholder="Enter search term or regex" rows="2"></textarea>
       
       <div class="fr-options-group" style="margin-top: 10px; margin-bottom: 10px; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap:10px;">
         <label class="checkbox-label-wrapper" for="useRegexBackup"><input type="checkbox" id="useRegexBackup"> Use Regex</label>
@@ -344,10 +300,8 @@
         <label class="checkbox-label-wrapper" for="frWholeWordCheckbox"><input type="checkbox" id="frWholeWordCheckbox"> Match Whole Word</label>
       </div>
 
-      <div class="option-group">
-        <label for="replaceText">Replacement Text:</label>
-        <textarea id="replaceText" placeholder="Enter replacement text" rows="2"></textarea>
-      </div>
+      <label for="replaceText">Replacement Text:</label>
+      <textarea id="replaceText" placeholder="Enter replacement text" rows="2"></textarea>
       
       <div class="fr-action-buttons-grid" style="margin-top: 15px;">
         <button id="findPreviousBtn" class="btn btn-primary fr-btn">↑ Find Previous</button>
@@ -377,26 +331,19 @@
     <!-- Create Backup from ZIP (Standalone Tool) -->
     <div id="createBackupFromZipApp" class="card tool-section" style="display:none;">
       <h1>Create Backup from ZIP</h1>
-      <div class="option-group">
-        <label for="zipBackupFile" id="zipBackupFileLabel">Upload ZIP File (.zip containing .txt chapters):</label>
-        <input type="file" id="zipBackupFile" accept=".zip" aria-labelledby="zipBackupFileLabel" aria-describedby="statusMessageCreateBackupFromZip">
-        <div class="filename-display-area">
-              <span id="zipBackupFileName"></span>
-              <button type="button" id="clearZipBackupFile" class="clear-file-btn" aria-label="Clear ZIP file" style="display:none;">&times;</button>
-        </div>
+      <label for="zipBackupFile" id="zipBackupFileLabel">Upload ZIP File (.zip containing .txt chapters):</label>
+      <input type="file" id="zipBackupFile" accept=".zip" aria-labelledby="zipBackupFileLabel">
+      <div class="filename-display-area">
+            <span id="zipBackupFileName"></span>
+            <button type="button" id="clearZipBackupFile" class="clear-file-btn" aria-label="Clear ZIP file" style="display:none;">&times;</button>
       </div>
-      <div class="option-group">
-        <label for="zipProjectTitle">Project Title:</label>
-        <input type="text" id="zipProjectTitle" placeholder="Enter project title" aria-describedby="statusMessageCreateBackupFromZip">
-      </div>
-      <div class="option-group">
-        <label for="zipDescription">Description:</label>
-        <textarea id="zipDescription" placeholder="Enter project description"></textarea>
-      </div>
-      <div class="option-group">
-        <label for="zipUniqueCode">Unique Code (Optional):</label>
-        <input type="text" id="zipUniqueCode" placeholder="Leave blank to generate automatically">
-      </div>
+      <label for="zipProjectTitle">Project Title:</label>
+      <input type="text" id="zipProjectTitle" placeholder="Enter project title">
+      <label for="zipDescription">Description:</label>
+      <textarea id="zipDescription" placeholder="Enter project description"></textarea>
+      <label for="zipUniqueCode">Unique Code (Optional):</label>
+      <input type="text" id="zipUniqueCode" placeholder="Leave blank to generate automatically">
+
       <div class="option-group">
           <label for="zipChapterPattern">Chapter Pattern (Optional):
             <span class="tooltip-trigger" aria-label="More info about Chapter Pattern" role="button" tabindex="0">(?)
@@ -407,12 +354,11 @@
       </div>
       <div class="option-group">
           <label for="zipStartNumber">Start Number:</label>
-          <input type="number" id="zipStartNumber" min="1" value="1" aria-describedby="statusMessageCreateBackupFromZip">
+          <input type="number" id="zipStartNumber" min="1" value="1">
       </div>
-      <div class="option-group">
-        <label for="zipExtraChapters">Extra Empty Chapters to Add:</label>
-        <input type="number" id="zipExtraChapters" min="0" value="0" aria-describedby="statusMessageCreateBackupFromZip">
-      </div>
+
+      <label for="zipExtraChapters">Extra Empty Chapters to Add:</label>
+      <input type="number" id="zipExtraChapters" min="0" value="0">
 
       <button id="createFromZipBtn" class="btn btn-primary" disabled>Generate Backup and Download</button>
       <div id="spinnerCreateBackupFromZip" class="spinner" role="status" aria-live="polite" aria-label="Loading"></div>
@@ -423,7 +369,7 @@
     <!-- ZIP to EPUB Converter -->
     <div id="zipToEpubApp" class="card tool-section" style="display:none;">
       <h1>ZIP to EPUB Converter</h1>
-      <div class="upload-section option-group">
+      <div class="upload-section">
         <label for="zipUploadForEpub" class="btn upload-btn" id="zipUploadForEpubLabel">Upload ZIP File (.zip with .txt chapters)</label>
         <input type="file" id="zipUploadForEpub" accept=".zip" style="display:none;" aria-labelledby="zipUploadForEpubLabel">
         <div class="filename-display-area">
@@ -431,27 +377,19 @@
             <button type="button" id="clearZipUploadForEpub" class="clear-file-btn" aria-label="Clear ZIP file" style="display:none;">&times;</button>
         </div>
       </div>
-
-      <div id="zipToEpubChapterArea" class="option-group" style="display:none;">
-          <label>Chapter Order and Titles:</label>
-          <p style="font-size: 0.8em; color: var(--secondary-text-color); text-align: center; margin-top: -5px;">
-              Drag to reorder. Click a title to edit it.
-          </p>
-          <ul id="zipToEpubChapterList" class="chapter-list-draggable" aria-label="List of chapters to include in the EPUB">
-              <!-- Dynamically populated by JS -->
-          </ul>
-      </div>
-
       <div class="options-section">
         <div class="option-group">
           <label for="epubTitle">EPUB Title:</label>
-          <input type="text" id="epubTitle" placeholder="Enter EPUB title" value="My Novel" aria-describedby="statusMessageZipToEpub">
+          <input type="text" id="epubTitle" placeholder="Enter EPUB title" value="My Novel">
         </div>
         <div class="option-group">
           <label for="epubAuthor">Author:</label>
-          <input type="text" id="epubAuthor" placeholder="Enter author name" value="Unknown Author" aria-describedby="statusMessageZipToEpub">
+          <input type="text" id="epubAuthor" placeholder="Enter author name" value="Unknown Author">
         </div>
-        
+        <div class="option-group">
+          <label for="epubLanguage">Language Code (e.g., en, es):</label>
+          <input type="text" id="epubLanguage" placeholder="en" value="en">
+        </div>
         <div class="option-group">
             <label for="epubCoverImage" id="epubCoverImageLabel">Cover Image (Optional, JPG/PNG):</label>
             <input type="file" id="epubCoverImage" accept="image/jpeg,image/png" style="margin-top:5px;" aria-labelledby="epubCoverImageLabel">
@@ -460,24 +398,6 @@
                 <button type="button" id="clearEpubCoverImage" class="clear-file-btn" aria-label="Clear cover image" style="display:none;">&times;</button>
             </div>
         </div>
-        
-        <details class="advanced-options-accordion">
-            <summary>Advanced Options</summary>
-            <div class="accordion-content">
-                <div class="option-group">
-                  <label for="epubLanguage">Language Code:</label>
-                  <input type="text" id="epubLanguage" placeholder="e.g., en" value="en" aria-describedby="statusMessageZipToEpub">
-                </div>
-                <div class="option-group">
-                    <label class="checkbox-label-wrapper" for="processMarkdown">
-                        <input type="checkbox" id="processMarkdown" /> Process chapter text as Markdown
-                    </label>
-                     <p style="font-size: 0.8em; color: var(--secondary-text-color); text-align: center; margin-top: -5px;">
-                        Supports headings (#), bold (**text**), and italic (*text*).
-                    </p>
-                </div>
-            </div>
-        </details>
       </div>
       <button id="createEpubBtn" class="btn split-btn" disabled>Create EPUB</button>
       <div id="spinnerZipToEpub" class="spinner" role="status" aria-live="polite" aria-label="Loading"></div>
@@ -490,7 +410,7 @@
     <!-- EPUB to ZIP (TXT) Converter -->
     <div id="epubToZipApp" class="card tool-section" style="display:none;">
       <h1>EPUB to ZIP (TXT)</h1>
-      <div class="upload-section option-group">
+      <div class="upload-section">
         <label for="epubUploadForTxt" class="btn upload-btn" id="epubUploadForTxtLabel">Upload EPUB File</label>
         <input type="file" id="epubUploadForTxt" accept=".epub" style="display:none;" aria-labelledby="epubUploadForTxtLabel">
         <div class="filename-display-area">
@@ -519,7 +439,7 @@
         </div>
         <div class="option-group" id="epubToZipRemoveLinesOptionsGroup" style="display:none;">
           <label for="epubToZipLinesToRemove">Number of lines to remove:</label>
-          <input type="number" id="epubToZipLinesToRemove" min="0" value="1" aria-describedby="statusMessageEpubToZip">
+          <input type="number" id="epubToZipLinesToRemove" min="0" value="1">
         </div>
       </div>
       <button id="extractChaptersBtn" class="btn split-btn" disabled>Extract Chapters to ZIP</button>
@@ -541,6 +461,6 @@
   <script src="jszip.min.js"></script> <!-- Ensure jszip.min.js is in the root or update path -->
 
   <script type="module" src="index.js"></script> <!-- Changed from index.tsx to index.js -->
-<script type="module" src="/index.tsx"></script>
+
 </body>
 </html>

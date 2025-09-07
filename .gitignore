@@ -1,0 +1,13 @@
+ts/augment-backup-with-zip.ts
+ts/backup-types.ts
+ts/capacitor-helpers.ts
+ts/create-backup-from-zip.ts
+ts/create-new-backup.ts
+ts/epub-splitter.ts
+ts/epub-to-zip.ts
+ts/extend-backup.ts
+ts/find-replace-backup.ts
+ts/main.ts
+ts/merge-backup.ts
+ts/ui-helpers.ts
+ts/zip-to-epub.ts
