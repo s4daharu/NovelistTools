@@ -13,6 +13,7 @@ const urlsToCache = [
   './icons/icon-128x128.png',
   './icons/icon-144x144.png',
   './icons/icon-152x152.png',
+  './icons/icon-167x167.png', // Added this icon
   './icons/icon-180x180.png',
   './icons/icon-192x192.png',
   './icons/icon-384x384.png',

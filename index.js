@@ -1209,6 +1209,9 @@ var init_web3 = __esm({
       async minimizeApp() {
         throw this.unimplemented("Not implemented on web.");
       }
+      async toggleBackButtonHandler() {
+        throw this.unimplemented("Not implemented on web.");
+      }
     };
   }
 });
@@ -1452,1627 +1455,6 @@ var Filesystem = registerPlugin("Filesystem", {
 });
 f();
 
-// node_modules/@awesome-cordova-plugins/core/bootstrap.js
-function checkReady() {
-  if (typeof process === "undefined") {
-    var win_1 = typeof window !== "undefined" ? window : {};
-    var DEVICE_READY_TIMEOUT_1 = 5e3;
-    var before_1 = Date.now();
-    var didFireReady_1 = false;
-    win_1.document.addEventListener("deviceready", function() {
-      console.log("Ionic Native: deviceready event fired after " + (Date.now() - before_1) + " ms");
-      didFireReady_1 = true;
-    });
-    setTimeout(function() {
-      if (!didFireReady_1 && win_1.cordova) {
-        console.warn("Ionic Native: deviceready did not fire within " + DEVICE_READY_TIMEOUT_1 + "ms. This can happen when plugins are in an inconsistent state. Try removing plugins from plugins/ and reinstalling them.");
-      }
-    }, DEVICE_READY_TIMEOUT_1);
-  }
-}
-
-// node_modules/tslib/tslib.es6.mjs
-var extendStatics = function(d, b) {
-  extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-    d2.__proto__ = b2;
-  } || function(d2, b2) {
-    for (var p in b2) if (Object.prototype.hasOwnProperty.call(b2, p)) d2[p] = b2[p];
-  };
-  return extendStatics(d, b);
-};
-function __extends(d, b) {
-  if (typeof b !== "function" && b !== null)
-    throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-  extendStatics(d, b);
-  function __() {
-    this.constructor = d;
-  }
-  d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-}
-function __awaiter(thisArg, _arguments, P, generator) {
-  function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve2) {
-      resolve2(value);
-    });
-  }
-  return new (P || (P = Promise))(function(resolve2, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    function step(result) {
-      result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-}
-function __generator(thisArg, body) {
-  var _ = { label: 0, sent: function() {
-    if (t[0] & 1) throw t[1];
-    return t[1];
-  }, trys: [], ops: [] }, f2, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-  return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() {
-    return this;
-  }), g;
-  function verb(n) {
-    return function(v) {
-      return step([n, v]);
-    };
-  }
-  function step(op) {
-    if (f2) throw new TypeError("Generator is already executing.");
-    while (g && (g = 0, op[0] && (_ = 0)), _) try {
-      if (f2 = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-      if (y = 0, t) op = [op[0] & 2, t.value];
-      switch (op[0]) {
-        case 0:
-        case 1:
-          t = op;
-          break;
-        case 4:
-          _.label++;
-          return { value: op[1], done: false };
-        case 5:
-          _.label++;
-          y = op[1];
-          op = [0];
-          continue;
-        case 7:
-          op = _.ops.pop();
-          _.trys.pop();
-          continue;
-        default:
-          if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-            _ = 0;
-            continue;
-          }
-          if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-            _.label = op[1];
-            break;
-          }
-          if (op[0] === 6 && _.label < t[1]) {
-            _.label = t[1];
-            t = op;
-            break;
-          }
-          if (t && _.label < t[2]) {
-            _.label = t[2];
-            _.ops.push(op);
-            break;
-          }
-          if (t[2]) _.ops.pop();
-          _.trys.pop();
-          continue;
-      }
-      op = body.call(thisArg, _);
-    } catch (e) {
-      op = [6, e];
-      y = 0;
-    } finally {
-      f2 = t = 0;
-    }
-    if (op[0] & 5) throw op[1];
-    return { value: op[0] ? op[1] : void 0, done: true };
-  }
-}
-function __values(o) {
-  var s2 = typeof Symbol === "function" && Symbol.iterator, m = s2 && o[s2], i = 0;
-  if (m) return m.call(o);
-  if (o && typeof o.length === "number") return {
-    next: function() {
-      if (o && i >= o.length) o = void 0;
-      return { value: o && o[i++], done: !o };
-    }
-  };
-  throw new TypeError(s2 ? "Object is not iterable." : "Symbol.iterator is not defined.");
-}
-function __read(o, n) {
-  var m = typeof Symbol === "function" && o[Symbol.iterator];
-  if (!m) return o;
-  var i = m.call(o), r, ar = [], e;
-  try {
-    while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-  } catch (error) {
-    e = { error };
-  } finally {
-    try {
-      if (r && !r.done && (m = i["return"])) m.call(i);
-    } finally {
-      if (e) throw e.error;
-    }
-  }
-  return ar;
-}
-function __spreadArray(to, from, pack) {
-  if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-    if (ar || !(i in from)) {
-      if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-      ar[i] = from[i];
-    }
-  }
-  return to.concat(ar || Array.prototype.slice.call(from));
-}
-function __await(v) {
-  return this instanceof __await ? (this.v = v, this) : new __await(v);
-}
-function __asyncGenerator(thisArg, _arguments, generator) {
-  if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-  var g = generator.apply(thisArg, _arguments || []), i, q = [];
-  return i = Object.create((typeof AsyncIterator === "function" ? AsyncIterator : Object).prototype), verb("next"), verb("throw"), verb("return", awaitReturn), i[Symbol.asyncIterator] = function() {
-    return this;
-  }, i;
-  function awaitReturn(f2) {
-    return function(v) {
-      return Promise.resolve(v).then(f2, reject);
-    };
-  }
-  function verb(n, f2) {
-    if (g[n]) {
-      i[n] = function(v) {
-        return new Promise(function(a, b) {
-          q.push([n, v, a, b]) > 1 || resume(n, v);
-        });
-      };
-      if (f2) i[n] = f2(i[n]);
-    }
-  }
-  function resume(n, v) {
-    try {
-      step(g[n](v));
-    } catch (e) {
-      settle(q[0][3], e);
-    }
-  }
-  function step(r) {
-    r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
-  }
-  function fulfill(value) {
-    resume("next", value);
-  }
-  function reject(value) {
-    resume("throw", value);
-  }
-  function settle(f2, v) {
-    if (f2(v), q.shift(), q.length) resume(q[0][0], q[0][1]);
-  }
-}
-function __asyncValues(o) {
-  if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-  var m = o[Symbol.asyncIterator], i;
-  return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
-    return this;
-  }, i);
-  function verb(n) {
-    i[n] = o[n] && function(v) {
-      return new Promise(function(resolve2, reject) {
-        v = o[n](v), settle(resolve2, reject, v.done, v.value);
-      });
-    };
-  }
-  function settle(resolve2, reject, d, v) {
-    Promise.resolve(v).then(function(v2) {
-      resolve2({ value: v2, done: d });
-    }, reject);
-  }
-}
-
-// node_modules/rxjs/dist/esm5/internal/util/isFunction.js
-function isFunction(value) {
-  return typeof value === "function";
-}
-
-// node_modules/rxjs/dist/esm5/internal/util/createErrorClass.js
-function createErrorClass(createImpl) {
-  var _super = function(instance) {
-    Error.call(instance);
-    instance.stack = new Error().stack;
-  };
-  var ctorFunc = createImpl(_super);
-  ctorFunc.prototype = Object.create(Error.prototype);
-  ctorFunc.prototype.constructor = ctorFunc;
-  return ctorFunc;
-}
-
-// node_modules/rxjs/dist/esm5/internal/util/UnsubscriptionError.js
-var UnsubscriptionError = createErrorClass(function(_super) {
-  return function UnsubscriptionErrorImpl(errors) {
-    _super(this);
-    this.message = errors ? errors.length + " errors occurred during unsubscription:\n" + errors.map(function(err, i) {
-      return i + 1 + ") " + err.toString();
-    }).join("\n  ") : "";
-    this.name = "UnsubscriptionError";
-    this.errors = errors;
-  };
-});
-
-// node_modules/rxjs/dist/esm5/internal/util/arrRemove.js
-function arrRemove(arr, item) {
-  if (arr) {
-    var index = arr.indexOf(item);
-    0 <= index && arr.splice(index, 1);
-  }
-}
-
-// node_modules/rxjs/dist/esm5/internal/Subscription.js
-var Subscription = function() {
-  function Subscription2(initialTeardown) {
-    this.initialTeardown = initialTeardown;
-    this.closed = false;
-    this._parentage = null;
-    this._finalizers = null;
-  }
-  Subscription2.prototype.unsubscribe = function() {
-    var e_1, _a, e_2, _b;
-    var errors;
-    if (!this.closed) {
-      this.closed = true;
-      var _parentage = this._parentage;
-      if (_parentage) {
-        this._parentage = null;
-        if (Array.isArray(_parentage)) {
-          try {
-            for (var _parentage_1 = __values(_parentage), _parentage_1_1 = _parentage_1.next(); !_parentage_1_1.done; _parentage_1_1 = _parentage_1.next()) {
-              var parent_1 = _parentage_1_1.value;
-              parent_1.remove(this);
-            }
-          } catch (e_1_1) {
-            e_1 = { error: e_1_1 };
-          } finally {
-            try {
-              if (_parentage_1_1 && !_parentage_1_1.done && (_a = _parentage_1.return)) _a.call(_parentage_1);
-            } finally {
-              if (e_1) throw e_1.error;
-            }
-          }
-        } else {
-          _parentage.remove(this);
-        }
-      }
-      var initialFinalizer = this.initialTeardown;
-      if (isFunction(initialFinalizer)) {
-        try {
-          initialFinalizer();
-        } catch (e) {
-          errors = e instanceof UnsubscriptionError ? e.errors : [e];
-        }
-      }
-      var _finalizers = this._finalizers;
-      if (_finalizers) {
-        this._finalizers = null;
-        try {
-          for (var _finalizers_1 = __values(_finalizers), _finalizers_1_1 = _finalizers_1.next(); !_finalizers_1_1.done; _finalizers_1_1 = _finalizers_1.next()) {
-            var finalizer = _finalizers_1_1.value;
-            try {
-              execFinalizer(finalizer);
-            } catch (err) {
-              errors = errors !== null && errors !== void 0 ? errors : [];
-              if (err instanceof UnsubscriptionError) {
-                errors = __spreadArray(__spreadArray([], __read(errors)), __read(err.errors));
-              } else {
-                errors.push(err);
-              }
-            }
-          }
-        } catch (e_2_1) {
-          e_2 = { error: e_2_1 };
-        } finally {
-          try {
-            if (_finalizers_1_1 && !_finalizers_1_1.done && (_b = _finalizers_1.return)) _b.call(_finalizers_1);
-          } finally {
-            if (e_2) throw e_2.error;
-          }
-        }
-      }
-      if (errors) {
-        throw new UnsubscriptionError(errors);
-      }
-    }
-  };
-  Subscription2.prototype.add = function(teardown) {
-    var _a;
-    if (teardown && teardown !== this) {
-      if (this.closed) {
-        execFinalizer(teardown);
-      } else {
-        if (teardown instanceof Subscription2) {
-          if (teardown.closed || teardown._hasParent(this)) {
-            return;
-          }
-          teardown._addParent(this);
-        }
-        (this._finalizers = (_a = this._finalizers) !== null && _a !== void 0 ? _a : []).push(teardown);
-      }
-    }
-  };
-  Subscription2.prototype._hasParent = function(parent) {
-    var _parentage = this._parentage;
-    return _parentage === parent || Array.isArray(_parentage) && _parentage.includes(parent);
-  };
-  Subscription2.prototype._addParent = function(parent) {
-    var _parentage = this._parentage;
-    this._parentage = Array.isArray(_parentage) ? (_parentage.push(parent), _parentage) : _parentage ? [_parentage, parent] : parent;
-  };
-  Subscription2.prototype._removeParent = function(parent) {
-    var _parentage = this._parentage;
-    if (_parentage === parent) {
-      this._parentage = null;
-    } else if (Array.isArray(_parentage)) {
-      arrRemove(_parentage, parent);
-    }
-  };
-  Subscription2.prototype.remove = function(teardown) {
-    var _finalizers = this._finalizers;
-    _finalizers && arrRemove(_finalizers, teardown);
-    if (teardown instanceof Subscription2) {
-      teardown._removeParent(this);
-    }
-  };
-  Subscription2.EMPTY = function() {
-    var empty = new Subscription2();
-    empty.closed = true;
-    return empty;
-  }();
-  return Subscription2;
-}();
-var EMPTY_SUBSCRIPTION = Subscription.EMPTY;
-function isSubscription(value) {
-  return value instanceof Subscription || value && "closed" in value && isFunction(value.remove) && isFunction(value.add) && isFunction(value.unsubscribe);
-}
-function execFinalizer(finalizer) {
-  if (isFunction(finalizer)) {
-    finalizer();
-  } else {
-    finalizer.unsubscribe();
-  }
-}
-
-// node_modules/rxjs/dist/esm5/internal/config.js
-var config = {
-  onUnhandledError: null,
-  onStoppedNotification: null,
-  Promise: void 0,
-  useDeprecatedSynchronousErrorHandling: false,
-  useDeprecatedNextContext: false
-};
-
-// node_modules/rxjs/dist/esm5/internal/scheduler/timeoutProvider.js
-var timeoutProvider = {
-  setTimeout: function(handler, timeout) {
-    var args = [];
-    for (var _i = 2; _i < arguments.length; _i++) {
-      args[_i - 2] = arguments[_i];
-    }
-    var delegate = timeoutProvider.delegate;
-    if (delegate === null || delegate === void 0 ? void 0 : delegate.setTimeout) {
-      return delegate.setTimeout.apply(delegate, __spreadArray([handler, timeout], __read(args)));
-    }
-    return setTimeout.apply(void 0, __spreadArray([handler, timeout], __read(args)));
-  },
-  clearTimeout: function(handle) {
-    var delegate = timeoutProvider.delegate;
-    return ((delegate === null || delegate === void 0 ? void 0 : delegate.clearTimeout) || clearTimeout)(handle);
-  },
-  delegate: void 0
-};
-
-// node_modules/rxjs/dist/esm5/internal/util/reportUnhandledError.js
-function reportUnhandledError(err) {
-  timeoutProvider.setTimeout(function() {
-    var onUnhandledError = config.onUnhandledError;
-    if (onUnhandledError) {
-      onUnhandledError(err);
-    } else {
-      throw err;
-    }
-  });
-}
-
-// node_modules/rxjs/dist/esm5/internal/util/noop.js
-function noop() {
-}
-
-// node_modules/rxjs/dist/esm5/internal/NotificationFactories.js
-var COMPLETE_NOTIFICATION = function() {
-  return createNotification("C", void 0, void 0);
-}();
-function errorNotification(error) {
-  return createNotification("E", void 0, error);
-}
-function nextNotification(value) {
-  return createNotification("N", value, void 0);
-}
-function createNotification(kind, value, error) {
-  return {
-    kind,
-    value,
-    error
-  };
-}
-
-// node_modules/rxjs/dist/esm5/internal/util/errorContext.js
-var context = null;
-function errorContext(cb) {
-  if (config.useDeprecatedSynchronousErrorHandling) {
-    var isRoot = !context;
-    if (isRoot) {
-      context = { errorThrown: false, error: null };
-    }
-    cb();
-    if (isRoot) {
-      var _a = context, errorThrown = _a.errorThrown, error = _a.error;
-      context = null;
-      if (errorThrown) {
-        throw error;
-      }
-    }
-  } else {
-    cb();
-  }
-}
-function captureError(err) {
-  if (config.useDeprecatedSynchronousErrorHandling && context) {
-    context.errorThrown = true;
-    context.error = err;
-  }
-}
-
-// node_modules/rxjs/dist/esm5/internal/Subscriber.js
-var Subscriber = function(_super) {
-  __extends(Subscriber2, _super);
-  function Subscriber2(destination) {
-    var _this = _super.call(this) || this;
-    _this.isStopped = false;
-    if (destination) {
-      _this.destination = destination;
-      if (isSubscription(destination)) {
-        destination.add(_this);
-      }
-    } else {
-      _this.destination = EMPTY_OBSERVER;
-    }
-    return _this;
-  }
-  Subscriber2.create = function(next, error, complete) {
-    return new SafeSubscriber(next, error, complete);
-  };
-  Subscriber2.prototype.next = function(value) {
-    if (this.isStopped) {
-      handleStoppedNotification(nextNotification(value), this);
-    } else {
-      this._next(value);
-    }
-  };
-  Subscriber2.prototype.error = function(err) {
-    if (this.isStopped) {
-      handleStoppedNotification(errorNotification(err), this);
-    } else {
-      this.isStopped = true;
-      this._error(err);
-    }
-  };
-  Subscriber2.prototype.complete = function() {
-    if (this.isStopped) {
-      handleStoppedNotification(COMPLETE_NOTIFICATION, this);
-    } else {
-      this.isStopped = true;
-      this._complete();
-    }
-  };
-  Subscriber2.prototype.unsubscribe = function() {
-    if (!this.closed) {
-      this.isStopped = true;
-      _super.prototype.unsubscribe.call(this);
-      this.destination = null;
-    }
-  };
-  Subscriber2.prototype._next = function(value) {
-    this.destination.next(value);
-  };
-  Subscriber2.prototype._error = function(err) {
-    try {
-      this.destination.error(err);
-    } finally {
-      this.unsubscribe();
-    }
-  };
-  Subscriber2.prototype._complete = function() {
-    try {
-      this.destination.complete();
-    } finally {
-      this.unsubscribe();
-    }
-  };
-  return Subscriber2;
-}(Subscription);
-var _bind = Function.prototype.bind;
-function bind(fn, thisArg) {
-  return _bind.call(fn, thisArg);
-}
-var ConsumerObserver = function() {
-  function ConsumerObserver2(partialObserver) {
-    this.partialObserver = partialObserver;
-  }
-  ConsumerObserver2.prototype.next = function(value) {
-    var partialObserver = this.partialObserver;
-    if (partialObserver.next) {
-      try {
-        partialObserver.next(value);
-      } catch (error) {
-        handleUnhandledError(error);
-      }
-    }
-  };
-  ConsumerObserver2.prototype.error = function(err) {
-    var partialObserver = this.partialObserver;
-    if (partialObserver.error) {
-      try {
-        partialObserver.error(err);
-      } catch (error) {
-        handleUnhandledError(error);
-      }
-    } else {
-      handleUnhandledError(err);
-    }
-  };
-  ConsumerObserver2.prototype.complete = function() {
-    var partialObserver = this.partialObserver;
-    if (partialObserver.complete) {
-      try {
-        partialObserver.complete();
-      } catch (error) {
-        handleUnhandledError(error);
-      }
-    }
-  };
-  return ConsumerObserver2;
-}();
-var SafeSubscriber = function(_super) {
-  __extends(SafeSubscriber2, _super);
-  function SafeSubscriber2(observerOrNext, error, complete) {
-    var _this = _super.call(this) || this;
-    var partialObserver;
-    if (isFunction(observerOrNext) || !observerOrNext) {
-      partialObserver = {
-        next: observerOrNext !== null && observerOrNext !== void 0 ? observerOrNext : void 0,
-        error: error !== null && error !== void 0 ? error : void 0,
-        complete: complete !== null && complete !== void 0 ? complete : void 0
-      };
-    } else {
-      var context_1;
-      if (_this && config.useDeprecatedNextContext) {
-        context_1 = Object.create(observerOrNext);
-        context_1.unsubscribe = function() {
-          return _this.unsubscribe();
-        };
-        partialObserver = {
-          next: observerOrNext.next && bind(observerOrNext.next, context_1),
-          error: observerOrNext.error && bind(observerOrNext.error, context_1),
-          complete: observerOrNext.complete && bind(observerOrNext.complete, context_1)
-        };
-      } else {
-        partialObserver = observerOrNext;
-      }
-    }
-    _this.destination = new ConsumerObserver(partialObserver);
-    return _this;
-  }
-  return SafeSubscriber2;
-}(Subscriber);
-function handleUnhandledError(error) {
-  if (config.useDeprecatedSynchronousErrorHandling) {
-    captureError(error);
-  } else {
-    reportUnhandledError(error);
-  }
-}
-function defaultErrorHandler(err) {
-  throw err;
-}
-function handleStoppedNotification(notification, subscriber) {
-  var onStoppedNotification = config.onStoppedNotification;
-  onStoppedNotification && timeoutProvider.setTimeout(function() {
-    return onStoppedNotification(notification, subscriber);
-  });
-}
-var EMPTY_OBSERVER = {
-  closed: true,
-  next: noop,
-  error: defaultErrorHandler,
-  complete: noop
-};
-
-// node_modules/rxjs/dist/esm5/internal/symbol/observable.js
-var observable = function() {
-  return typeof Symbol === "function" && Symbol.observable || "@@observable";
-}();
-
-// node_modules/rxjs/dist/esm5/internal/util/identity.js
-function identity(x) {
-  return x;
-}
-
-// node_modules/rxjs/dist/esm5/internal/util/pipe.js
-function pipeFromArray(fns) {
-  if (fns.length === 0) {
-    return identity;
-  }
-  if (fns.length === 1) {
-    return fns[0];
-  }
-  return function piped(input) {
-    return fns.reduce(function(prev, fn) {
-      return fn(prev);
-    }, input);
-  };
-}
-
-// node_modules/rxjs/dist/esm5/internal/Observable.js
-var Observable = function() {
-  function Observable2(subscribe) {
-    if (subscribe) {
-      this._subscribe = subscribe;
-    }
-  }
-  Observable2.prototype.lift = function(operator) {
-    var observable2 = new Observable2();
-    observable2.source = this;
-    observable2.operator = operator;
-    return observable2;
-  };
-  Observable2.prototype.subscribe = function(observerOrNext, error, complete) {
-    var _this = this;
-    var subscriber = isSubscriber(observerOrNext) ? observerOrNext : new SafeSubscriber(observerOrNext, error, complete);
-    errorContext(function() {
-      var _a = _this, operator = _a.operator, source = _a.source;
-      subscriber.add(operator ? operator.call(subscriber, source) : source ? _this._subscribe(subscriber) : _this._trySubscribe(subscriber));
-    });
-    return subscriber;
-  };
-  Observable2.prototype._trySubscribe = function(sink) {
-    try {
-      return this._subscribe(sink);
-    } catch (err) {
-      sink.error(err);
-    }
-  };
-  Observable2.prototype.forEach = function(next, promiseCtor) {
-    var _this = this;
-    promiseCtor = getPromiseCtor(promiseCtor);
-    return new promiseCtor(function(resolve2, reject) {
-      var subscriber = new SafeSubscriber({
-        next: function(value) {
-          try {
-            next(value);
-          } catch (err) {
-            reject(err);
-            subscriber.unsubscribe();
-          }
-        },
-        error: reject,
-        complete: resolve2
-      });
-      _this.subscribe(subscriber);
-    });
-  };
-  Observable2.prototype._subscribe = function(subscriber) {
-    var _a;
-    return (_a = this.source) === null || _a === void 0 ? void 0 : _a.subscribe(subscriber);
-  };
-  Observable2.prototype[observable] = function() {
-    return this;
-  };
-  Observable2.prototype.pipe = function() {
-    var operations = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      operations[_i] = arguments[_i];
-    }
-    return pipeFromArray(operations)(this);
-  };
-  Observable2.prototype.toPromise = function(promiseCtor) {
-    var _this = this;
-    promiseCtor = getPromiseCtor(promiseCtor);
-    return new promiseCtor(function(resolve2, reject) {
-      var value;
-      _this.subscribe(function(x) {
-        return value = x;
-      }, function(err) {
-        return reject(err);
-      }, function() {
-        return resolve2(value);
-      });
-    });
-  };
-  Observable2.create = function(subscribe) {
-    return new Observable2(subscribe);
-  };
-  return Observable2;
-}();
-function getPromiseCtor(promiseCtor) {
-  var _a;
-  return (_a = promiseCtor !== null && promiseCtor !== void 0 ? promiseCtor : config.Promise) !== null && _a !== void 0 ? _a : Promise;
-}
-function isObserver(value) {
-  return value && isFunction(value.next) && isFunction(value.error) && isFunction(value.complete);
-}
-function isSubscriber(value) {
-  return value && value instanceof Subscriber || isObserver(value) && isSubscription(value);
-}
-
-// node_modules/rxjs/dist/esm5/internal/util/lift.js
-function hasLift(source) {
-  return isFunction(source === null || source === void 0 ? void 0 : source.lift);
-}
-function operate(init) {
-  return function(source) {
-    if (hasLift(source)) {
-      return source.lift(function(liftedSource) {
-        try {
-          return init(liftedSource, this);
-        } catch (err) {
-          this.error(err);
-        }
-      });
-    }
-    throw new TypeError("Unable to lift unknown Observable type");
-  };
-}
-
-// node_modules/rxjs/dist/esm5/internal/operators/OperatorSubscriber.js
-function createOperatorSubscriber(destination, onNext, onComplete, onError, onFinalize) {
-  return new OperatorSubscriber(destination, onNext, onComplete, onError, onFinalize);
-}
-var OperatorSubscriber = function(_super) {
-  __extends(OperatorSubscriber2, _super);
-  function OperatorSubscriber2(destination, onNext, onComplete, onError, onFinalize, shouldUnsubscribe) {
-    var _this = _super.call(this, destination) || this;
-    _this.onFinalize = onFinalize;
-    _this.shouldUnsubscribe = shouldUnsubscribe;
-    _this._next = onNext ? function(value) {
-      try {
-        onNext(value);
-      } catch (err) {
-        destination.error(err);
-      }
-    } : _super.prototype._next;
-    _this._error = onError ? function(err) {
-      try {
-        onError(err);
-      } catch (err2) {
-        destination.error(err2);
-      } finally {
-        this.unsubscribe();
-      }
-    } : _super.prototype._error;
-    _this._complete = onComplete ? function() {
-      try {
-        onComplete();
-      } catch (err) {
-        destination.error(err);
-      } finally {
-        this.unsubscribe();
-      }
-    } : _super.prototype._complete;
-    return _this;
-  }
-  OperatorSubscriber2.prototype.unsubscribe = function() {
-    var _a;
-    if (!this.shouldUnsubscribe || this.shouldUnsubscribe()) {
-      var closed_1 = this.closed;
-      _super.prototype.unsubscribe.call(this);
-      !closed_1 && ((_a = this.onFinalize) === null || _a === void 0 ? void 0 : _a.call(this));
-    }
-  };
-  return OperatorSubscriber2;
-}(Subscriber);
-
-// node_modules/rxjs/dist/esm5/internal/util/isArrayLike.js
-var isArrayLike = function(x) {
-  return x && typeof x.length === "number" && typeof x !== "function";
-};
-
-// node_modules/rxjs/dist/esm5/internal/util/isPromise.js
-function isPromise(value) {
-  return isFunction(value === null || value === void 0 ? void 0 : value.then);
-}
-
-// node_modules/rxjs/dist/esm5/internal/util/isInteropObservable.js
-function isInteropObservable(input) {
-  return isFunction(input[observable]);
-}
-
-// node_modules/rxjs/dist/esm5/internal/util/isAsyncIterable.js
-function isAsyncIterable(obj) {
-  return Symbol.asyncIterator && isFunction(obj === null || obj === void 0 ? void 0 : obj[Symbol.asyncIterator]);
-}
-
-// node_modules/rxjs/dist/esm5/internal/util/throwUnobservableError.js
-function createInvalidObservableTypeError(input) {
-  return new TypeError("You provided " + (input !== null && typeof input === "object" ? "an invalid object" : "'" + input + "'") + " where a stream was expected. You can provide an Observable, Promise, ReadableStream, Array, AsyncIterable, or Iterable.");
-}
-
-// node_modules/rxjs/dist/esm5/internal/symbol/iterator.js
-function getSymbolIterator() {
-  if (typeof Symbol !== "function" || !Symbol.iterator) {
-    return "@@iterator";
-  }
-  return Symbol.iterator;
-}
-var iterator = getSymbolIterator();
-
-// node_modules/rxjs/dist/esm5/internal/util/isIterable.js
-function isIterable(input) {
-  return isFunction(input === null || input === void 0 ? void 0 : input[iterator]);
-}
-
-// node_modules/rxjs/dist/esm5/internal/util/isReadableStreamLike.js
-function readableStreamLikeToAsyncGenerator(readableStream) {
-  return __asyncGenerator(this, arguments, function readableStreamLikeToAsyncGenerator_1() {
-    var reader, _a, value, done;
-    return __generator(this, function(_b) {
-      switch (_b.label) {
-        case 0:
-          reader = readableStream.getReader();
-          _b.label = 1;
-        case 1:
-          _b.trys.push([1, , 9, 10]);
-          _b.label = 2;
-        case 2:
-          if (false) return [3, 8];
-          return [4, __await(reader.read())];
-        case 3:
-          _a = _b.sent(), value = _a.value, done = _a.done;
-          if (!done) return [3, 5];
-          return [4, __await(void 0)];
-        case 4:
-          return [2, _b.sent()];
-        case 5:
-          return [4, __await(value)];
-        case 6:
-          return [4, _b.sent()];
-        case 7:
-          _b.sent();
-          return [3, 2];
-        case 8:
-          return [3, 10];
-        case 9:
-          reader.releaseLock();
-          return [7];
-        case 10:
-          return [2];
-      }
-    });
-  });
-}
-function isReadableStreamLike(obj) {
-  return isFunction(obj === null || obj === void 0 ? void 0 : obj.getReader);
-}
-
-// node_modules/rxjs/dist/esm5/internal/observable/innerFrom.js
-function innerFrom(input) {
-  if (input instanceof Observable) {
-    return input;
-  }
-  if (input != null) {
-    if (isInteropObservable(input)) {
-      return fromInteropObservable(input);
-    }
-    if (isArrayLike(input)) {
-      return fromArrayLike(input);
-    }
-    if (isPromise(input)) {
-      return fromPromise(input);
-    }
-    if (isAsyncIterable(input)) {
-      return fromAsyncIterable(input);
-    }
-    if (isIterable(input)) {
-      return fromIterable(input);
-    }
-    if (isReadableStreamLike(input)) {
-      return fromReadableStreamLike(input);
-    }
-  }
-  throw createInvalidObservableTypeError(input);
-}
-function fromInteropObservable(obj) {
-  return new Observable(function(subscriber) {
-    var obs = obj[observable]();
-    if (isFunction(obs.subscribe)) {
-      return obs.subscribe(subscriber);
-    }
-    throw new TypeError("Provided object does not correctly implement Symbol.observable");
-  });
-}
-function fromArrayLike(array) {
-  return new Observable(function(subscriber) {
-    for (var i = 0; i < array.length && !subscriber.closed; i++) {
-      subscriber.next(array[i]);
-    }
-    subscriber.complete();
-  });
-}
-function fromPromise(promise) {
-  return new Observable(function(subscriber) {
-    promise.then(function(value) {
-      if (!subscriber.closed) {
-        subscriber.next(value);
-        subscriber.complete();
-      }
-    }, function(err) {
-      return subscriber.error(err);
-    }).then(null, reportUnhandledError);
-  });
-}
-function fromIterable(iterable) {
-  return new Observable(function(subscriber) {
-    var e_1, _a;
-    try {
-      for (var iterable_1 = __values(iterable), iterable_1_1 = iterable_1.next(); !iterable_1_1.done; iterable_1_1 = iterable_1.next()) {
-        var value = iterable_1_1.value;
-        subscriber.next(value);
-        if (subscriber.closed) {
-          return;
-        }
-      }
-    } catch (e_1_1) {
-      e_1 = { error: e_1_1 };
-    } finally {
-      try {
-        if (iterable_1_1 && !iterable_1_1.done && (_a = iterable_1.return)) _a.call(iterable_1);
-      } finally {
-        if (e_1) throw e_1.error;
-      }
-    }
-    subscriber.complete();
-  });
-}
-function fromAsyncIterable(asyncIterable) {
-  return new Observable(function(subscriber) {
-    process2(asyncIterable, subscriber).catch(function(err) {
-      return subscriber.error(err);
-    });
-  });
-}
-function fromReadableStreamLike(readableStream) {
-  return fromAsyncIterable(readableStreamLikeToAsyncGenerator(readableStream));
-}
-function process2(asyncIterable, subscriber) {
-  var asyncIterable_1, asyncIterable_1_1;
-  var e_2, _a;
-  return __awaiter(this, void 0, void 0, function() {
-    var value, e_2_1;
-    return __generator(this, function(_b) {
-      switch (_b.label) {
-        case 0:
-          _b.trys.push([0, 5, 6, 11]);
-          asyncIterable_1 = __asyncValues(asyncIterable);
-          _b.label = 1;
-        case 1:
-          return [4, asyncIterable_1.next()];
-        case 2:
-          if (!(asyncIterable_1_1 = _b.sent(), !asyncIterable_1_1.done)) return [3, 4];
-          value = asyncIterable_1_1.value;
-          subscriber.next(value);
-          if (subscriber.closed) {
-            return [2];
-          }
-          _b.label = 3;
-        case 3:
-          return [3, 1];
-        case 4:
-          return [3, 11];
-        case 5:
-          e_2_1 = _b.sent();
-          e_2 = { error: e_2_1 };
-          return [3, 11];
-        case 6:
-          _b.trys.push([6, , 9, 10]);
-          if (!(asyncIterable_1_1 && !asyncIterable_1_1.done && (_a = asyncIterable_1.return))) return [3, 8];
-          return [4, _a.call(asyncIterable_1)];
-        case 7:
-          _b.sent();
-          _b.label = 8;
-        case 8:
-          return [3, 10];
-        case 9:
-          if (e_2) throw e_2.error;
-          return [7];
-        case 10:
-          return [7];
-        case 11:
-          subscriber.complete();
-          return [2];
-      }
-    });
-  });
-}
-
-// node_modules/rxjs/dist/esm5/internal/util/executeSchedule.js
-function executeSchedule(parentSubscription, scheduler, work, delay2, repeat) {
-  if (delay2 === void 0) {
-    delay2 = 0;
-  }
-  if (repeat === void 0) {
-    repeat = false;
-  }
-  var scheduleSubscription = scheduler.schedule(function() {
-    work();
-    if (repeat) {
-      parentSubscription.add(this.schedule(null, delay2));
-    } else {
-      this.unsubscribe();
-    }
-  }, delay2);
-  parentSubscription.add(scheduleSubscription);
-  if (!repeat) {
-    return scheduleSubscription;
-  }
-}
-
-// node_modules/rxjs/dist/esm5/internal/operators/map.js
-function map(project, thisArg) {
-  return operate(function(source, subscriber) {
-    var index = 0;
-    source.subscribe(createOperatorSubscriber(subscriber, function(value) {
-      subscriber.next(project.call(thisArg, value, index++));
-    }));
-  });
-}
-
-// node_modules/rxjs/dist/esm5/internal/util/mapOneOrManyArgs.js
-var isArray = Array.isArray;
-function callOrApply(fn, args) {
-  return isArray(args) ? fn.apply(void 0, __spreadArray([], __read(args))) : fn(args);
-}
-function mapOneOrManyArgs(fn) {
-  return map(function(args) {
-    return callOrApply(fn, args);
-  });
-}
-
-// node_modules/rxjs/dist/esm5/internal/operators/mergeInternals.js
-function mergeInternals(source, subscriber, project, concurrent, onBeforeNext, expand, innerSubScheduler, additionalFinalizer) {
-  var buffer = [];
-  var active = 0;
-  var index = 0;
-  var isComplete = false;
-  var checkComplete = function() {
-    if (isComplete && !buffer.length && !active) {
-      subscriber.complete();
-    }
-  };
-  var outerNext = function(value) {
-    return active < concurrent ? doInnerSub(value) : buffer.push(value);
-  };
-  var doInnerSub = function(value) {
-    expand && subscriber.next(value);
-    active++;
-    var innerComplete = false;
-    innerFrom(project(value, index++)).subscribe(createOperatorSubscriber(subscriber, function(innerValue) {
-      onBeforeNext === null || onBeforeNext === void 0 ? void 0 : onBeforeNext(innerValue);
-      if (expand) {
-        outerNext(innerValue);
-      } else {
-        subscriber.next(innerValue);
-      }
-    }, function() {
-      innerComplete = true;
-    }, void 0, function() {
-      if (innerComplete) {
-        try {
-          active--;
-          var _loop_1 = function() {
-            var bufferedValue = buffer.shift();
-            if (innerSubScheduler) {
-              executeSchedule(subscriber, innerSubScheduler, function() {
-                return doInnerSub(bufferedValue);
-              });
-            } else {
-              doInnerSub(bufferedValue);
-            }
-          };
-          while (buffer.length && active < concurrent) {
-            _loop_1();
-          }
-          checkComplete();
-        } catch (err) {
-          subscriber.error(err);
-        }
-      }
-    }));
-  };
-  source.subscribe(createOperatorSubscriber(subscriber, outerNext, function() {
-    isComplete = true;
-    checkComplete();
-  }));
-  return function() {
-    additionalFinalizer === null || additionalFinalizer === void 0 ? void 0 : additionalFinalizer();
-  };
-}
-
-// node_modules/rxjs/dist/esm5/internal/operators/mergeMap.js
-function mergeMap(project, resultSelector, concurrent) {
-  if (concurrent === void 0) {
-    concurrent = Infinity;
-  }
-  if (isFunction(resultSelector)) {
-    return mergeMap(function(a, i) {
-      return map(function(b, ii) {
-        return resultSelector(a, b, i, ii);
-      })(innerFrom(project(a, i)));
-    }, concurrent);
-  } else if (typeof resultSelector === "number") {
-    concurrent = resultSelector;
-  }
-  return operate(function(source, subscriber) {
-    return mergeInternals(source, subscriber, project, concurrent);
-  });
-}
-
-// node_modules/rxjs/dist/esm5/internal/observable/fromEvent.js
-var nodeEventEmitterMethods = ["addListener", "removeListener"];
-var eventTargetMethods = ["addEventListener", "removeEventListener"];
-var jqueryMethods = ["on", "off"];
-function fromEvent(target, eventName, options, resultSelector) {
-  if (isFunction(options)) {
-    resultSelector = options;
-    options = void 0;
-  }
-  if (resultSelector) {
-    return fromEvent(target, eventName, options).pipe(mapOneOrManyArgs(resultSelector));
-  }
-  var _a = __read(isEventTarget(target) ? eventTargetMethods.map(function(methodName) {
-    return function(handler) {
-      return target[methodName](eventName, handler, options);
-    };
-  }) : isNodeStyleEventEmitter(target) ? nodeEventEmitterMethods.map(toCommonHandlerRegistry(target, eventName)) : isJQueryStyleEventEmitter(target) ? jqueryMethods.map(toCommonHandlerRegistry(target, eventName)) : [], 2), add = _a[0], remove = _a[1];
-  if (!add) {
-    if (isArrayLike(target)) {
-      return mergeMap(function(subTarget) {
-        return fromEvent(subTarget, eventName, options);
-      })(innerFrom(target));
-    }
-  }
-  if (!add) {
-    throw new TypeError("Invalid event target");
-  }
-  return new Observable(function(subscriber) {
-    var handler = function() {
-      var args = [];
-      for (var _i = 0; _i < arguments.length; _i++) {
-        args[_i] = arguments[_i];
-      }
-      return subscriber.next(1 < args.length ? args : args[0]);
-    };
-    add(handler);
-    return function() {
-      return remove(handler);
-    };
-  });
-}
-function toCommonHandlerRegistry(target, eventName) {
-  return function(methodName) {
-    return function(handler) {
-      return target[methodName](eventName, handler);
-    };
-  };
-}
-function isNodeStyleEventEmitter(target) {
-  return isFunction(target.addListener) && isFunction(target.removeListener);
-}
-function isJQueryStyleEventEmitter(target) {
-  return isFunction(target.on) && isFunction(target.off);
-}
-function isEventTarget(target) {
-  return isFunction(target.addEventListener) && isFunction(target.removeEventListener);
-}
-
-// node_modules/@awesome-cordova-plugins/core/decorators/common.js
-var ERR_CORDOVA_NOT_AVAILABLE = { error: "cordova_not_available" };
-var ERR_PLUGIN_NOT_INSTALLED = { error: "plugin_not_installed" };
-function getPromise(callback) {
-  var tryNativePromise = function() {
-    if (Promise) {
-      return new Promise(function(resolve2, reject) {
-        callback(resolve2, reject);
-      });
-    } else {
-      console.error("No Promise support or polyfill found. To enable Ionic Native support, please add the es6-promise polyfill before this script, or run with a library like Angular or on a recent browser.");
-    }
-  };
-  if (typeof window !== "undefined" && window.angular) {
-    var doc = window.document;
-    var injector = window.angular.element(doc.querySelector("[ng-app]") || doc.body).injector();
-    if (injector) {
-      var $q = injector.get("$q");
-      return $q(function(resolve2, reject) {
-        callback(resolve2, reject);
-      });
-    }
-    console.warn("Angular 1 was detected but $q couldn't be retrieved. This is usually when the app is not bootstrapped on the html or body tag. Falling back to native promises which won't trigger an automatic digest when promises resolve.");
-  }
-  return tryNativePromise();
-}
-function wrapPromise(pluginObj, methodName, args, opts) {
-  if (opts === void 0) {
-    opts = {};
-  }
-  var pluginResult, rej;
-  var p = getPromise(function(resolve2, reject) {
-    if (opts.destruct) {
-      pluginResult = callCordovaPlugin(pluginObj, methodName, args, opts, function() {
-        var args2 = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-          args2[_i] = arguments[_i];
-        }
-        return resolve2(args2);
-      }, function() {
-        var args2 = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-          args2[_i] = arguments[_i];
-        }
-        return reject(args2);
-      });
-    } else {
-      pluginResult = callCordovaPlugin(pluginObj, methodName, args, opts, resolve2, reject);
-    }
-    rej = reject;
-  });
-  if (pluginResult && pluginResult.error) {
-    p.catch(function() {
-    });
-    typeof rej === "function" && rej(pluginResult.error);
-  }
-  return p;
-}
-function wrapOtherPromise(pluginObj, methodName, args, opts) {
-  if (opts === void 0) {
-    opts = {};
-  }
-  return getPromise(function(resolve2, reject) {
-    var pluginResult = callCordovaPlugin(pluginObj, methodName, args, opts);
-    if (pluginResult) {
-      if (pluginResult.error) {
-        reject(pluginResult.error);
-      } else if (pluginResult.then) {
-        pluginResult.then(resolve2).catch(reject);
-      }
-    } else {
-      reject({ error: "unexpected_error" });
-    }
-  });
-}
-function wrapObservable(pluginObj, methodName, args, opts) {
-  if (opts === void 0) {
-    opts = {};
-  }
-  return new Observable(function(observer) {
-    var pluginResult;
-    if (opts.destruct) {
-      pluginResult = callCordovaPlugin(pluginObj, methodName, args, opts, function() {
-        var args2 = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-          args2[_i] = arguments[_i];
-        }
-        return observer.next(args2);
-      }, function() {
-        var args2 = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-          args2[_i] = arguments[_i];
-        }
-        return observer.error(args2);
-      });
-    } else {
-      pluginResult = callCordovaPlugin(pluginObj, methodName, args, opts, observer.next.bind(observer), observer.error.bind(observer));
-    }
-    if (pluginResult && pluginResult.error) {
-      observer.error(pluginResult.error);
-      observer.complete();
-    }
-    return function() {
-      try {
-        if (opts.clearFunction) {
-          if (opts.clearWithArgs) {
-            return callCordovaPlugin(pluginObj, opts.clearFunction, args, opts, observer.next.bind(observer), observer.error.bind(observer));
-          }
-          return callCordovaPlugin(pluginObj, opts.clearFunction, []);
-        }
-      } catch (e) {
-        console.warn("Unable to clear the previous observable watch for", pluginObj.constructor.getPluginName(), methodName);
-        console.warn(e);
-      }
-    };
-  });
-}
-function wrapEventObservable(event, element) {
-  element = typeof window !== "undefined" && element ? get(window, element) : element || (typeof window !== "undefined" ? window : {});
-  return fromEvent(element, event);
-}
-function checkAvailability(plugin, methodName, pluginName) {
-  var pluginRef, pluginPackage;
-  if (typeof plugin === "string") {
-    pluginRef = plugin;
-  } else {
-    pluginRef = plugin.constructor.getPluginRef();
-    pluginName = plugin.constructor.getPluginName();
-    pluginPackage = plugin.constructor.getPluginInstallName();
-  }
-  var pluginInstance = getPlugin(pluginRef);
-  if (!pluginInstance || !!methodName && typeof pluginInstance[methodName] === "undefined") {
-    if (typeof window === "undefined" || !window.cordova) {
-      cordovaWarn(pluginName, methodName);
-      return ERR_CORDOVA_NOT_AVAILABLE;
-    }
-    pluginWarn(pluginName, pluginPackage, methodName);
-    return ERR_PLUGIN_NOT_INSTALLED;
-  }
-  return true;
-}
-function setIndex(args, opts, resolve2, reject) {
-  if (opts === void 0) {
-    opts = {};
-  }
-  if (opts.sync) {
-    return args;
-  }
-  if (opts.callbackOrder === "reverse") {
-    args.unshift(reject);
-    args.unshift(resolve2);
-  } else if (opts.callbackStyle === "node") {
-    args.push(function(err, result) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve2(result);
-      }
-    });
-  } else if (opts.callbackStyle === "object" && opts.successName && opts.errorName) {
-    var obj = {};
-    obj[opts.successName] = resolve2;
-    obj[opts.errorName] = reject;
-    args.push(obj);
-  } else if (typeof opts.successIndex !== "undefined" || typeof opts.errorIndex !== "undefined") {
-    var setSuccessIndex = function() {
-      if (opts.successIndex > args.length) {
-        args[opts.successIndex] = resolve2;
-      } else {
-        args.splice(opts.successIndex, 0, resolve2);
-      }
-    };
-    var setErrorIndex = function() {
-      if (opts.errorIndex > args.length) {
-        args[opts.errorIndex] = reject;
-      } else {
-        args.splice(opts.errorIndex, 0, reject);
-      }
-    };
-    if (opts.successIndex > opts.errorIndex) {
-      setErrorIndex();
-      setSuccessIndex();
-    } else {
-      setSuccessIndex();
-      setErrorIndex();
-    }
-  } else {
-    args.push(resolve2);
-    args.push(reject);
-  }
-  return args;
-}
-function callCordovaPlugin(pluginObj, methodName, args, opts, resolve2, reject) {
-  if (opts === void 0) {
-    opts = {};
-  }
-  args = setIndex(args, opts, resolve2, reject);
-  var availabilityCheck = checkAvailability(pluginObj, methodName);
-  if (availabilityCheck === true) {
-    var pluginInstance = getPlugin(pluginObj.constructor.getPluginRef());
-    return pluginInstance[methodName].apply(pluginInstance, args);
-  } else {
-    return availabilityCheck;
-  }
-}
-function getPlugin(pluginRef) {
-  if (typeof window !== "undefined") {
-    return get(window, pluginRef);
-  }
-  return null;
-}
-function get(element, path) {
-  var paths = path.split(".");
-  var obj = element;
-  for (var i = 0; i < paths.length; i++) {
-    if (!obj) {
-      return null;
-    }
-    obj = obj[paths[i]];
-  }
-  return obj;
-}
-function pluginWarn(pluginName, plugin, method) {
-  if (method) {
-    console.warn("Native: tried calling " + pluginName + "." + method + ", but the " + pluginName + " plugin is not installed.");
-  } else {
-    console.warn("Native: tried accessing the " + pluginName + " plugin but it's not installed.");
-  }
-  if (plugin) {
-    console.warn("Install the " + pluginName + " plugin: 'ionic cordova plugin add " + plugin + "'");
-  }
-}
-function cordovaWarn(pluginName, method) {
-  if (typeof process === "undefined") {
-    if (method) {
-      console.warn("Native: tried calling " + pluginName + "." + method + ", but Cordova is not available. Make sure to include cordova.js or run in a device/simulator");
-    } else {
-      console.warn("Native: tried accessing the " + pluginName + " plugin but Cordova is not available. Make sure to include cordova.js or run in a device/simulator");
-    }
-  }
-}
-var wrap = function(pluginObj, methodName, opts) {
-  if (opts === void 0) {
-    opts = {};
-  }
-  return function() {
-    var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      args[_i] = arguments[_i];
-    }
-    if (opts.sync) {
-      return callCordovaPlugin(pluginObj, methodName, args, opts);
-    } else if (opts.observable) {
-      return wrapObservable(pluginObj, methodName, args, opts);
-    } else if (opts.eventObservable && opts.event) {
-      return wrapEventObservable(opts.event, opts.element);
-    } else if (opts.otherPromise) {
-      return wrapOtherPromise(pluginObj, methodName, args, opts);
-    } else {
-      return wrapPromise(pluginObj, methodName, args, opts);
-    }
-  };
-};
-
-// node_modules/@awesome-cordova-plugins/core/util.js
-function get2(element, path) {
-  var paths = path.split(".");
-  var obj = element;
-  for (var i = 0; i < paths.length; i++) {
-    if (!obj) {
-      return null;
-    }
-    obj = obj[paths[i]];
-  }
-  return obj;
-}
-
-// node_modules/@awesome-cordova-plugins/core/awesome-cordova-plugin.js
-var AwesomeCordovaNativePlugin = (
-  /** @class */
-  function() {
-    function AwesomeCordovaNativePlugin2() {
-    }
-    AwesomeCordovaNativePlugin2.installed = function() {
-      var isAvailable = checkAvailability(this.pluginRef) === true;
-      return isAvailable;
-    };
-    AwesomeCordovaNativePlugin2.getPlugin = function() {
-      if (typeof window !== "undefined") {
-        return get2(window, this.pluginRef);
-      }
-      return null;
-    };
-    AwesomeCordovaNativePlugin2.getPluginName = function() {
-      var pluginName = this.pluginName;
-      return pluginName;
-    };
-    AwesomeCordovaNativePlugin2.getPluginRef = function() {
-      var pluginRef = this.pluginRef;
-      return pluginRef;
-    };
-    AwesomeCordovaNativePlugin2.getPluginInstallName = function() {
-      var plugin = this.plugin;
-      return plugin;
-    };
-    AwesomeCordovaNativePlugin2.getSupportedPlatforms = function() {
-      var platform = this.platforms;
-      return platform;
-    };
-    AwesomeCordovaNativePlugin2.pluginName = "";
-    AwesomeCordovaNativePlugin2.pluginRef = "";
-    AwesomeCordovaNativePlugin2.plugin = "";
-    AwesomeCordovaNativePlugin2.repo = "";
-    AwesomeCordovaNativePlugin2.platforms = [];
-    AwesomeCordovaNativePlugin2.install = "";
-    return AwesomeCordovaNativePlugin2;
-  }()
-);
-
-// node_modules/@awesome-cordova-plugins/core/decorators/cordova.js
-function cordova(pluginObj, methodName, config2, args) {
-  return wrap(pluginObj, methodName, config2).apply(this, args);
-}
-
-// node_modules/@awesome-cordova-plugins/core/index.js
-checkReady();
-
-// node_modules/@awesome-cordova-plugins/file-opener/index.js
-var __extends2 = /* @__PURE__ */ function() {
-  var extendStatics2 = function(d, b) {
-    extendStatics2 = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-      d2.__proto__ = b2;
-    } || function(d2, b2) {
-      for (var p in b2) if (Object.prototype.hasOwnProperty.call(b2, p)) d2[p] = b2[p];
-    };
-    return extendStatics2(d, b);
-  };
-  return function(d, b) {
-    if (typeof b !== "function" && b !== null)
-      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics2(d, b);
-    function __() {
-      this.constructor = d;
-    }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-var FileOpenerOriginal = (
-  /** @class */
-  function(_super) {
-    __extends2(FileOpenerOriginal2, _super);
-    function FileOpenerOriginal2() {
-      return _super !== null && _super.apply(this, arguments) || this;
-    }
-    FileOpenerOriginal2.prototype.open = function(filePath, fileMIMEType) {
-      return cordova(this, "open", { "callbackStyle": "object", "successName": "success", "errorName": "error" }, arguments);
-    };
-    FileOpenerOriginal2.prototype.uninstall = function(packageId) {
-      return cordova(this, "uninstall", { "callbackStyle": "object", "successName": "success", "errorName": "error" }, arguments);
-    };
-    FileOpenerOriginal2.prototype.appIsInstalled = function(packageId) {
-      return cordova(this, "appIsInstalled", { "callbackStyle": "object", "successName": "success", "errorName": "error" }, arguments);
-    };
-    FileOpenerOriginal2.prototype.showOpenWithDialog = function(filePath, fileMIMEType) {
-      return cordova(this, "showOpenWithDialog", { "callbackStyle": "object", "successName": "success", "errorName": "error" }, arguments);
-    };
-    FileOpenerOriginal2.pluginName = "FileOpener";
-    FileOpenerOriginal2.plugin = "cordova-plugin-file-opener2";
-    FileOpenerOriginal2.pluginRef = "cordova.plugins.fileOpener2";
-    FileOpenerOriginal2.repo = "https://github.com/pwlin/cordova-plugin-file-opener2";
-    FileOpenerOriginal2.platforms = ["Android", "iOS", "Windows", "Windows Phone 8"];
-    return FileOpenerOriginal2;
-  }(AwesomeCordovaNativePlugin)
-);
-var FileOpener = new FileOpenerOriginal();
-
 // ts/capacitor-helpers.ts
 async function saveBlobNative(blob, filename, mimeType, showToastFunction) {
   if (!Capacitor.isNativePlatform()) {
@@ -3101,15 +1483,28 @@ async function saveBlobNative(blob, filename, mimeType, showToastFunction) {
     showToastFunction(`File saved: ${filename} (in app folder/Downloads)`, false);
     try {
       console.log(`Attempting to open file: ${writeResult.uri} with MIME: ${mimeType}`);
-      if (FileOpener && typeof FileOpener.open === "function") {
-        await FileOpener.open(writeResult.uri, mimeType);
-        console.log("FileOpener.open call succeeded.");
+      const fileOpener = window.cordova?.plugins?.fileOpener2;
+      if (fileOpener && typeof fileOpener.open === "function") {
+        fileOpener.open(
+          writeResult.uri,
+          mimeType,
+          {
+            error: (error) => {
+              console.warn("Could not open file automatically with FileOpener:", error);
+              let openErrorMessage = `Could not auto-open file: ${error.message}`;
+              showToastFunction(openErrorMessage, true);
+            },
+            success: () => {
+              console.log("FileOpener.open call succeeded.");
+            }
+          }
+        );
       } else {
-        console.warn("FileOpener or FileOpener.open is not available. Skipping open.");
+        console.warn("FileOpener plugin is not available. Skipping open.");
         showToastFunction("File saved. Opener not available.", false);
       }
     } catch (e) {
-      console.warn("Could not open file automatically with FileOpener:", e);
+      console.warn("Could not open file automatically with FileOpener plugin:", e);
       let openErrorMessage = "Could not auto-open file";
       if (e && e.message) {
         openErrorMessage += `: ${e.message}`;
@@ -3173,14 +1568,18 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
   const downloadLink = document.getElementById("downloadLink");
   const chapterPatternLabel = document.querySelector('label[for="chapterPattern"]');
   const tooltipTrigger = chapterPatternLabel?.querySelector(".tooltip-trigger");
+  const chapterPatternEl = document.getElementById("chapterPattern");
+  const startNumberEl = document.getElementById("startNumber");
+  const offsetNumberEl = document.getElementById("offsetNumber");
+  const groupSizeEl = document.getElementById("groupSize");
   const chapterSelectionArea = document.getElementById("splitterChapterSelectionArea");
   const chapterListUl = document.getElementById("splitterChapterList");
   const selectAllChaptersBtn = document.getElementById("splitterSelectAllChapters");
   const deselectAllChaptersBtn = document.getElementById("splitterDeselectAllChapters");
   let selectedFile = null;
   let parsedChaptersForSelection = [];
-  if (!uploadInput || !splitBtn || !modeSelect || !fileNameEl || !clearFileBtn || !groupSizeGrp || !statusEl || !downloadSec || !downloadLink || !tooltipTrigger || !chapterSelectionArea || !chapterListUl || !selectAllChaptersBtn || !deselectAllChaptersBtn) {
-    console.error("EPUB Splitter UI elements (or tooltip/chapter selection) not found. Initialization failed.");
+  if (!uploadInput || !splitBtn || !modeSelect || !fileNameEl || !clearFileBtn || !groupSizeGrp || !statusEl || !downloadSec || !downloadLink || !tooltipTrigger || !chapterPatternEl || !startNumberEl || !offsetNumberEl || !groupSizeEl || !chapterSelectionArea || !chapterListUl || !selectAllChaptersBtn || !deselectAllChaptersBtn) {
+    console.error("EPUB Splitter UI elements not found. Initialization failed.");
     return;
   }
   tooltipTrigger.addEventListener("click", (e) => {
@@ -3242,12 +1641,12 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
     const target = e.target;
     selectedFile = target.files ? target.files[0] : null;
     resetChapterSelectionUI();
+    statusEl.style.display = "none";
+    downloadSec.style.display = "none";
     if (selectedFile) {
       fileNameEl.textContent = `Selected: ${selectedFile.name}`;
       if (clearFileBtn) clearFileBtn.style.display = "inline-block";
       splitBtn.disabled = true;
-      if (statusEl) statusEl.style.display = "none";
-      if (downloadSec) downloadSec.style.display = "none";
       toggleAppSpinner(true);
       try {
         const buffer = await readFileAsArrayBuffer(selectedFile);
@@ -3299,7 +1698,6 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
         }
         parsedChaptersForSelection = tempChapters.map((text, index) => ({
           index,
-          // Use "Chapter X" as title for now, getting actual titles is complex without full ToC parsing.
           title: `Chapter ${index + 1} (Preview: ${text.substring(0, 50).replace(/\s+/g, " ")}${text.length > 50 ? "..." : ""})`,
           text
         }));
@@ -3309,11 +1707,17 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
           showAppToast(`Found ${parsedChaptersForSelection.length} potential chapters. Review selection.`, false);
         } else {
           showAppToast("No chapters found for selection. Check EPUB structure.", true);
+          statusEl.textContent = "Error: No chapters found for selection. Check EPUB structure.";
+          statusEl.className = "status error";
+          statusEl.style.display = "block";
           splitBtn.disabled = true;
         }
       } catch (err) {
         console.error("EPUB parsing for chapter selection failed:", err);
         showAppToast(`Error parsing EPUB for chapter list: ${err.message}`, true);
+        statusEl.textContent = `Error: ${err.message || "Could not parse EPUB for chapter list."}`;
+        statusEl.className = "status error";
+        statusEl.style.display = "block";
         splitBtn.disabled = true;
       } finally {
         toggleAppSpinner(false);
@@ -3330,8 +1734,8 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
     fileNameEl.textContent = "";
     clearFileBtn.style.display = "none";
     splitBtn.disabled = true;
-    if (statusEl) statusEl.style.display = "none";
-    if (downloadSec) downloadSec.style.display = "none";
+    statusEl.style.display = "none";
+    downloadSec.style.display = "none";
     resetChapterSelectionUI();
   });
   modeSelect.addEventListener("change", () => {
@@ -3340,12 +1744,21 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
     }
   });
   splitBtn.addEventListener("click", async () => {
+    statusEl.style.display = "none";
+    downloadSec.style.display = "none";
     if (!selectedFile) {
       showAppToast("No file selected for EPUB splitting.", true);
+      statusEl.textContent = "Error: No file selected.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      uploadInput.focus();
       return;
     }
     if (parsedChaptersForSelection.length === 0) {
       showAppToast("No chapters available for splitting. Please re-upload or check the EPUB.", true);
+      statusEl.textContent = "Error: No chapters available for splitting.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
       return;
     }
     const selectedChapterIndices = [];
@@ -3355,25 +1768,58 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
     });
     if (selectedChapterIndices.length === 0) {
       showAppToast("No chapters selected to split. Please select at least one chapter.", true);
+      statusEl.textContent = "Error: No chapters selected to split.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
       return;
     }
     const chaptersToProcess = parsedChaptersForSelection.filter((chapInfo) => selectedChapterIndices.includes(chapInfo.index)).map((chapInfo) => chapInfo.text);
+    const pattern = chapterPatternEl.value.trim() || "Chapter";
+    const startNumber = parseInt(startNumberEl.value, 10);
+    if (isNaN(startNumber) || startNumber < 1) {
+      showAppToast("Start Number must be 1 or greater.", true);
+      statusEl.textContent = "Error: Start Number must be 1 or greater.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      startNumberEl.focus();
+      return;
+    }
+    const offset = parseInt(offsetNumberEl.value, 10);
+    if (isNaN(offset) || offset < 0) {
+      showAppToast("Offset must be 0 or greater.", true);
+      statusEl.textContent = "Error: Offset must be 0 or greater.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      offsetNumberEl.focus();
+      return;
+    }
+    const mode = modeSelect.value;
+    let groupSize = 1;
+    if (mode === "grouped") {
+      groupSize = parseInt(groupSizeEl.value, 10);
+      if (isNaN(groupSize) || groupSize < 1) {
+        showAppToast("Chapters per File (for grouped mode) must be 1 or greater.", true);
+        statusEl.textContent = "Error: Chapters per File must be 1 or greater.";
+        statusEl.className = "status error";
+        statusEl.style.display = "block";
+        groupSizeEl.focus();
+        return;
+      }
+    }
     if (Capacitor.isNativePlatform()) {
       Haptics.impact({ style: ImpactStyle.Light });
     }
     toggleAppSpinner(true);
-    if (statusEl) statusEl.style.display = "none";
-    if (downloadSec) downloadSec.style.display = "none";
-    const chapterPatternEl = document.getElementById("chapterPattern");
-    const startNumberEl = document.getElementById("startNumber");
-    const offsetNumberEl = document.getElementById("offsetNumber");
-    const groupSizeEl = document.getElementById("groupSize");
     try {
-      const pattern = chapterPatternEl.value.trim() || "chapter";
-      const startNumber = parseInt(startNumberEl.value, 10) || 1;
-      const offset = Math.max(0, parseInt(offsetNumberEl.value, 10) || 0);
-      const mode = modeSelect.value;
       const usableChaps = chaptersToProcess.slice(offset);
+      if (usableChaps.length === 0) {
+        showAppToast(`Offset of ${offset} resulted in no chapters to process from your selection.`, true);
+        statusEl.textContent = `Warning: Offset of ${offset} resulted in 0 chapters to process from selection.`;
+        statusEl.className = "status error";
+        statusEl.style.display = "block";
+        toggleAppSpinner(false);
+        return;
+      }
       const effectiveStart = startNumber;
       const zip = new JSZip();
       if (mode === "single") {
@@ -3382,7 +1828,6 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
           zip.file(`${pattern}${chapNum}.txt`, text);
         });
       } else {
-        let groupSize = parseInt(groupSizeEl.value, 10) || 1;
         for (let i = 0; i < usableChaps.length; i += groupSize) {
           const groupStartNum = effectiveStart + i;
           const groupEndNum = Math.min(
@@ -3398,9 +1843,9 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
           zip.file(name, content);
         }
       }
-      const { blob, count, skipped } = await zip.generateAsync({ type: "blob" }).then((blob2) => ({ blob: blob2, count: usableChaps.length, skipped: offset }));
+      const { blob, count } = await zip.generateAsync({ type: "blob" }).then((blob2) => ({ blob: blob2, count: usableChaps.length }));
       if (downloadLink) {
-        const downloadFilename = `${chapterPatternEl.value.trim() || "chapter"}_chapters.zip`;
+        const downloadFilename = `${pattern}_chapters.zip`;
         const nativeSaveSucceeded = await saveBlobNative(blob, downloadFilename, "application/zip", showAppToast);
         if (!nativeSaveSucceeded) {
           downloadLink.href = URL.createObjectURL(blob);
@@ -3411,21 +1856,17 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
           URL.revokeObjectURL(downloadLink.href);
         }
       }
-      if (downloadSec) downloadSec.style.display = "block";
-      if (statusEl) {
-        statusEl.textContent = `Extracted ${count} chapter(s) from your selection.`;
-        statusEl.className = "status success";
-        statusEl.style.display = "block";
-      }
+      downloadSec.style.display = "block";
+      statusEl.textContent = `Extracted ${count} chapter(s) from your selection. Download started.`;
+      statusEl.className = "status success";
+      statusEl.style.display = "block";
       showAppToast(`Extracted ${count} chapter(s).`);
     } catch (err) {
       console.error("EPUB Splitter Error:", err);
-      if (statusEl) {
-        statusEl.textContent = `Error: ${err.message}`;
-        statusEl.className = "status error";
-        statusEl.style.display = "block";
-      }
-      showAppToast(`Error: ${err.message}`, true);
+      statusEl.textContent = `Error: ${err.message}`;
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      showAppToast(`Error splitting EPUB: ${err.message}`, true);
     } finally {
       toggleAppSpinner(false);
     }
@@ -3443,30 +1884,6 @@ function generateUUID() {
 function sanitizeForXML(str) {
   if (!str) return "";
   return str.replace(/[^a-zA-Z0-9_-]/g, "_");
-}
-function textToXHTML(text, chapterTitle) {
-  let bodyContent = `<h2>${escapeHTML(chapterTitle)}</h2>
-`;
-  const paragraphs = text.replace(/\r\n/g, "\n").split(/\n\n+/);
-  paragraphs.forEach((p) => {
-    const trimmedP = p.trim();
-    if (trimmedP) {
-      bodyContent += `    <p>${escapeHTML(trimmedP)}</p>
-`;
-    }
-  });
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en">
-<head>
-  <title>${escapeHTML(chapterTitle)}</title>
-  <link rel="stylesheet" type="text/css" href="../css/style.css" /> 
-</head>
-<body>
-  <section epub:type="chapter">
-${bodyContent}  </section>
-</body>
-</html>`;
 }
 function escapeHTML(str) {
   if (typeof str !== "string") {
@@ -3489,6 +1906,55 @@ function escapeHTML(str) {
     }
   });
 }
+function escapeAndProcessInlines(line) {
+  let processedLine = line.replace(/\*\*(.*?)\*\*|__(.*?)__/g, "%%STRONG_START%%$1$2%%STRONG_END%%").replace(/\*(.*?)\*|_(.*?)_/g, "%%EM_START%%$1$2%%EM_END%%");
+  processedLine = escapeHTML(processedLine);
+  processedLine = processedLine.replace(/%%STRONG_START%%/g, "<strong>").replace(/%%STRONG_END%%/g, "</strong>").replace(/%%EM_START%%/g, "<em>").replace(/%%EM_END%%/g, "</em>");
+  return processedLine;
+}
+function textToXHTML(text, chapterTitle, useMarkdown, language) {
+  const bodyContent = `<h2>${escapeHTML(chapterTitle)}</h2>
+`;
+  let chapterBody = "";
+  const lines = text.replace(/\r\n/g, "\n").split("\n");
+  lines.forEach((line) => {
+    const trimmedLine = line.trim();
+    if (trimmedLine) {
+      let lineHtml = "";
+      if (useMarkdown) {
+        const headingMatch = trimmedLine.match(/^(#{1,6})\s+(.*)/);
+        if (headingMatch) {
+          const level = headingMatch[1].length;
+          const content = headingMatch[2];
+          lineHtml = `  <h${level}>${escapeAndProcessInlines(content)}</h${level}>
+`;
+        } else {
+          const processedLine = escapeAndProcessInlines(trimmedLine);
+          lineHtml = `    <p>${processedLine}</p>
+`;
+        }
+      } else {
+        lineHtml = `    <p>${escapeHTML(trimmedLine)}</p>
+`;
+      }
+      chapterBody += lineHtml;
+    } else if (line.length === 0) {
+      chapterBody += "    <p>&nbsp;</p>\n";
+    }
+  });
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="${escapeHTML(language)}">
+<head>
+  <title>${escapeHTML(chapterTitle)}</title>
+  <link rel="stylesheet" type="text/css" href="../css/style.css" /> 
+</head>
+<body>
+  <section epub:type="chapter">
+${bodyContent}${chapterBody}  </section>
+</body>
+</html>`;
+}
 function initializeZipToEpub(showAppToast, toggleAppSpinner) {
   const zipUploadInput = document.getElementById("zipUploadForEpub");
   const zipFileNameEl = document.getElementById("zipFileNameForEpub");
@@ -3499,39 +1965,150 @@ function initializeZipToEpub(showAppToast, toggleAppSpinner) {
   const epubCoverImageInput = document.getElementById("epubCoverImage");
   const epubCoverFileNameEl = document.getElementById("epubCoverFileName");
   const clearCoverBtn = document.getElementById("clearEpubCoverImage");
+  const processMarkdownCheckbox = document.getElementById("processMarkdown");
+  const chapterArea = document.getElementById("zipToEpubChapterArea");
+  const chapterListUl = document.getElementById("zipToEpubChapterList");
   const createBtn = document.getElementById("createEpubBtn");
   const statusEl = document.getElementById("statusMessageZipToEpub");
   const downloadSec = document.getElementById("downloadSectionZipToEpub");
   const downloadLink = document.getElementById("downloadLinkEpub");
   let selectedZipFile = null;
   let selectedCoverFile = null;
-  if (!zipUploadInput || !createBtn || !zipFileNameEl || !clearZipBtn || !epubTitleInput || !epubAuthorInput || !epubLangInput || !epubCoverImageInput || !epubCoverFileNameEl || !clearCoverBtn || !statusEl || !downloadSec || !downloadLink) {
+  let chapters = [];
+  let draggedItem = null;
+  if (!zipUploadInput || !createBtn || !zipFileNameEl || !clearZipBtn || !epubTitleInput || !epubAuthorInput || !epubLangInput || !epubCoverImageInput || !epubCoverFileNameEl || !clearCoverBtn || !processMarkdownCheckbox || !chapterArea || !chapterListUl || !statusEl || !downloadSec || !downloadLink) {
     console.error("ZIP to EPUB UI elements not found. Initialization failed.");
     return;
   }
-  zipUploadInput.addEventListener("change", (e) => {
+  function resetUI(full = false) {
+    if (downloadSec) downloadSec.style.display = "none";
+    if (statusEl) statusEl.style.display = "none";
+    if (chapterArea) chapterArea.style.display = "none";
+    if (chapterListUl) chapterListUl.innerHTML = "";
+    chapters = [];
+    if (full) {
+      selectedZipFile = null;
+      zipUploadInput.value = "";
+      zipFileNameEl.textContent = "";
+      clearZipBtn.style.display = "none";
+      createBtn.disabled = true;
+    }
+  }
+  function renderChapterList() {
+    if (!chapterListUl) return;
+    chapterListUl.innerHTML = "";
+    chapters.forEach((chapter) => {
+      const li = document.createElement("li");
+      li.draggable = true;
+      li.dataset.name = chapter.name;
+      const handle = document.createElement("span");
+      handle.className = "drag-handle";
+      handle.textContent = "\u2630";
+      const titleInput = document.createElement("input");
+      titleInput.type = "text";
+      titleInput.className = "chapter-title-input";
+      titleInput.value = chapter.title;
+      titleInput.ariaLabel = `Title for chapter ${chapter.name}`;
+      titleInput.addEventListener("input", () => {
+        const chapterToUpdate = chapters.find((c) => c.name === chapter.name);
+        if (chapterToUpdate) {
+          chapterToUpdate.title = titleInput.value;
+        }
+      });
+      li.appendChild(handle);
+      li.appendChild(titleInput);
+      chapterListUl.appendChild(li);
+    });
+  }
+  chapterListUl.addEventListener("dragstart", (e) => {
+    draggedItem = e.target;
+    setTimeout(() => {
+      if (draggedItem) draggedItem.classList.add("dragging");
+    }, 0);
+  });
+  chapterListUl.addEventListener("dragend", () => {
+    if (draggedItem) {
+      draggedItem.classList.remove("dragging");
+      draggedItem = null;
+    }
+  });
+  chapterListUl.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    const afterElement = getDragAfterElement(chapterListUl, e.clientY);
+    const currentDragged = document.querySelector(".dragging");
+    if (currentDragged) {
+      if (afterElement == null) {
+        chapterListUl.appendChild(currentDragged);
+      } else {
+        chapterListUl.insertBefore(currentDragged, afterElement);
+      }
+    }
+  });
+  chapterListUl.addEventListener("drop", (e) => {
+    e.preventDefault();
+    const newOrderedNames = Array.from(chapterListUl.querySelectorAll("li")).map((li) => li.dataset.name);
+    chapters.sort((a, b) => {
+      const indexA = newOrderedNames.indexOf(a.name);
+      const indexB = newOrderedNames.indexOf(b.name);
+      return indexA - indexB;
+    });
+  });
+  function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll("li:not(.dragging)")];
+    return draggableElements.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) {
+        return { offset, element: child };
+      } else {
+        return closest;
+      }
+    }, { offset: Number.NEGATIVE_INFINITY, element: null }).element;
+  }
+  zipUploadInput.addEventListener("change", async (e) => {
     const target = e.target;
+    resetUI();
     selectedZipFile = target.files ? target.files[0] : null;
     if (selectedZipFile) {
       zipFileNameEl.textContent = `Selected ZIP: ${selectedZipFile.name}`;
       if (clearZipBtn) clearZipBtn.style.display = "inline-block";
-      createBtn.disabled = false;
-      if (statusEl) statusEl.style.display = "none";
-      if (downloadSec) downloadSec.style.display = "none";
-    } else {
-      zipFileNameEl.textContent = "";
-      if (clearZipBtn) clearZipBtn.style.display = "none";
       createBtn.disabled = true;
+      toggleAppSpinner(true);
+      try {
+        const contentZip = await JSZip.loadAsync(selectedZipFile);
+        const chapterPromises = [];
+        contentZip.forEach((relativePath, zipEntry) => {
+          if (!zipEntry.dir && zipEntry.name.toLowerCase().endsWith(".txt")) {
+            chapterPromises.push(
+              zipEntry.async("string").then((text) => ({
+                name: zipEntry.name,
+                content: text,
+                title: zipEntry.name.replace(/\.txt$/i, "").replace(/_/g, " ")
+              }))
+            );
+          }
+        });
+        const loadedChapters = (await Promise.all(chapterPromises)).filter(Boolean);
+        if (loadedChapters.length === 0) {
+          throw new Error("No .txt files found in the uploaded ZIP.");
+        }
+        loadedChapters.sort((a, b) => a.name.localeCompare(b.name, void 0, { numeric: true, sensitivity: "base" }));
+        chapters = loadedChapters;
+        renderChapterList();
+        chapterArea.style.display = "block";
+        createBtn.disabled = false;
+      } catch (err) {
+        showAppToast(`Error reading ZIP: ${err.message}`, true);
+        resetUI(true);
+      } finally {
+        toggleAppSpinner(false);
+      }
+    } else {
+      resetUI(true);
     }
   });
   clearZipBtn.addEventListener("click", () => {
-    selectedZipFile = null;
-    zipUploadInput.value = "";
-    zipFileNameEl.textContent = "";
-    clearZipBtn.style.display = "none";
-    createBtn.disabled = true;
-    if (statusEl) statusEl.style.display = "none";
-    if (downloadSec) downloadSec.style.display = "none";
+    resetUI(true);
   });
   epubCoverImageInput.addEventListener("change", (e) => {
     const target = e.target;
@@ -3551,19 +2128,40 @@ function initializeZipToEpub(showAppToast, toggleAppSpinner) {
     clearCoverBtn.style.display = "none";
   });
   createBtn.addEventListener("click", async () => {
-    if (!selectedZipFile) {
-      showAppToast("Please upload a ZIP file containing chapter .txt files.", true);
+    if (statusEl) statusEl.style.display = "none";
+    if (chapters.length === 0) {
+      showAppToast("Please upload a ZIP file with .txt chapters.", true);
+      statusEl.textContent = "Error: No chapters loaded to create an EPUB.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      zipUploadInput.focus();
       return;
     }
+    const title = epubTitleInput.value.trim();
+    if (!title) {
+      showAppToast("EPUB Title is required.", true);
+      statusEl.textContent = "Error: EPUB Title is required.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      epubTitleInput.focus();
+      return;
+    }
+    const author = epubAuthorInput.value.trim();
+    if (!author) {
+      showAppToast("Author is required.", true);
+      statusEl.textContent = "Error: Author is required.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      epubAuthorInput.focus();
+      return;
+    }
+    const language = epubLangInput.value.trim() || "en";
+    const useMarkdown = processMarkdownCheckbox.checked;
     if (Capacitor.isNativePlatform()) {
       Haptics.impact({ style: ImpactStyle.Light });
     }
-    const title = epubTitleInput.value.trim() || "Untitled EPUB";
-    const author = epubAuthorInput.value.trim() || "Unknown Author";
-    const language = epubLangInput.value.trim() || "en";
     const bookUUID = `urn:uuid:${generateUUID()}`;
     toggleAppSpinner(true);
-    if (statusEl) statusEl.style.display = "none";
     if (downloadSec) downloadSec.style.display = "none";
     try {
       const epubZip = new JSZip();
@@ -3578,35 +2176,14 @@ function initializeZipToEpub(showAppToast, toggleAppSpinner) {
       const oebps = epubZip.folder("OEBPS");
       if (!oebps) throw new Error("Could not create OEBPS folder.");
       const cssFolder = oebps.folder("css");
-      if (!cssFolder) throw new Error("Could not create OEBPS/css folder.");
       const textFolder = oebps.folder("text");
-      if (!textFolder) throw new Error("Could not create OEBPS/text folder.");
       const imagesFolder = oebps.folder("images");
-      if (!imagesFolder) throw new Error("Could not create OEBPS/images folder.");
-      const basicCSS = `body { font-family: sans-serif; line-height: 1.5; margin: 1em; }
-h1, h2, h3 { text-align: center; }
-p { text-indent: 1.5em; margin-top: 0; margin-bottom: 0.5em; }
-.cover { text-align: center; margin-top: 20%; }
-.cover img { max-width: 80%; max-height: 80vh; }`;
+      const basicCSS = `body { font-family: sans-serif; line-height: 1.6; margin: 1em; }
+h1, h2, h3, h4, h5, h6 { text-align: center; line-height: 1.3; }
+p { text-indent: 1.5em; margin-top: 0; margin-bottom: 0.5em; text-align: justify; }
+.cover { text-align: center; margin: 0; padding: 0; height: 100vh; page-break-after: always; }
+.cover img { max-width: 100%; max-height: 100vh; object-fit: contain; }`;
       cssFolder.file("style.css", basicCSS);
-      const contentZip = await JSZip.loadAsync(selectedZipFile);
-      const chapterPromises = [];
-      contentZip.forEach((relativePath, zipEntry) => {
-        if (!zipEntry.dir && zipEntry.name.toLowerCase().endsWith(".txt")) {
-          chapterPromises.push(
-            zipEntry.async("string").then((text) => ({
-              name: zipEntry.name,
-              originalName: relativePath,
-              content: text
-            }))
-          );
-        }
-      });
-      let chapters = await Promise.all(chapterPromises);
-      if (chapters.length === 0) {
-        throw new Error("No .txt files found in the uploaded ZIP.");
-      }
-      chapters.sort((a, b) => a.name.localeCompare(b.name, void 0, { numeric: true, sensitivity: "base" }));
       const manifestItems = [
         { id: "css", href: "css/style.css", "media-type": "text/css" },
         { id: "nav", href: "nav.xhtml", "media-type": "application/xhtml+xml", properties: "nav" }
@@ -3615,11 +2192,9 @@ p { text-indent: 1.5em; margin-top: 0; margin-bottom: 0.5em; }
       const navLiItems = [];
       const ncxNavPoints = [];
       let playOrder = 1;
-      let coverImageFilename = null;
-      let coverXHTMLAdded = false;
       if (selectedCoverFile) {
         const coverExt = selectedCoverFile.name.split(".").pop()?.toLowerCase() || "png";
-        coverImageFilename = `cover.${coverExt}`;
+        const coverImageFilename = `cover.${coverExt}`;
         const coverMediaType = coverExt === "jpg" || coverExt === "jpeg" ? "image/jpeg" : "image/png";
         const coverImageData = await selectedCoverFile.arrayBuffer();
         imagesFolder.file(coverImageFilename, coverImageData);
@@ -3632,34 +2207,31 @@ p { text-indent: 1.5em; margin-top: 0; margin-bottom: 0.5em; }
   <link rel="stylesheet" type="text/css" href="../css/style.css" />
 </head>
 <body>
-  <section epub:type="cover" class="cover">
+  <div class="cover">
     <img src="../images/${coverImageFilename}" alt="Cover Image"/>
-  </section>
+  </div>
 </body>
 </html>`;
         textFolder.file("cover.xhtml", coverXHTMLContent);
         manifestItems.push({ id: "cover-page", href: "text/cover.xhtml", "media-type": "application/xhtml+xml" });
         spineItems.push({ idref: "cover-page", linear: "no" });
-        coverXHTMLAdded = true;
       }
-      for (let i = 0; i < chapters.length; i++) {
-        const chapter = chapters[i];
-        const chapterBaseName = sanitizeForXML(chapter.name.replace(/\.txt$/i, "")) || `chapter_${i + 1}`;
+      chapters.forEach((chapter, i) => {
+        const chapterBaseName = sanitizeForXML(chapter.title) || `chapter_${i + 1}`;
         const chapterFilename = `${chapterBaseName}.xhtml`;
-        const chapterTitle = chapter.name.replace(/\.txt$/i, "").replace(/_/g, " ");
-        const xhtmlContent = textToXHTML(chapter.content, chapterTitle);
+        const xhtmlContent = textToXHTML(chapter.content, chapter.title, useMarkdown, language);
         textFolder.file(chapterFilename, xhtmlContent);
         const itemId = `chapter-${i + 1}`;
         manifestItems.push({ id: itemId, href: `text/${chapterFilename}`, "media-type": "application/xhtml+xml" });
         spineItems.push({ idref: itemId, linear: "yes" });
-        navLiItems.push(`<li><a href="text/${chapterFilename}">${escapeHTML(chapterTitle)}</a></li>`);
+        navLiItems.push(`<li><a href="text/${chapterFilename}">${escapeHTML(chapter.title)}</a></li>`);
         ncxNavPoints.push(`
     <navPoint id="navpoint-${playOrder}" playOrder="${playOrder}">
-      <navLabel><text>${escapeHTML(chapterTitle)}</text></navLabel>
+      <navLabel><text>${escapeHTML(chapter.title)}</text></navLabel>
       <content src="text/${chapterFilename}"/>
     </navPoint>`);
         playOrder++;
-      }
+      });
       const navXHTMLContent = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="${language}">
@@ -3672,13 +2244,6 @@ p { text-indent: 1.5em; margin-top: 0; margin-bottom: 0.5em; }
     <h1>Table of Contents</h1>
     <ol>
       ${navLiItems.join("\n      ")}
-    </ol>
-  </nav>
-  <nav epub:type="landmarks" hidden="hidden">
-    <ol>
-      ${coverXHTMLAdded ? `<li><a epub:type="cover" href="text/cover.xhtml">Cover</a></li>` : ""}
-      <li><a epub:type="toc" href="nav.xhtml">Table of Contents</a></li>
-      <li><a epub:type="bodymatter" href="text/${sanitizeForXML(chapters[0].name.replace(/\.txt$/i, "")) || "chapter_1"}.xhtml">Start Reading</a></li>
     </ol>
   </nav>
 </body>
@@ -3744,20 +2309,16 @@ p { text-indent: 1.5em; margin-top: 0; margin-bottom: 0.5em; }
         }
       }
       if (downloadSec) downloadSec.style.display = "block";
-      if (statusEl) {
-        statusEl.textContent = `EPUB "${title}" created successfully with ${chapters.length} chapter(s).`;
-        statusEl.className = "status success";
-        statusEl.style.display = "block";
-      }
+      statusEl.textContent = `EPUB "${title}" created successfully with ${chapters.length} chapter(s). Download started.`;
+      statusEl.className = "status success";
+      statusEl.style.display = "block";
       showAppToast("EPUB created successfully!");
     } catch (err) {
       console.error("ZIP to EPUB Error:", err);
-      if (statusEl) {
-        statusEl.textContent = `Error: ${err.message}`;
-        statusEl.className = "status error";
-        statusEl.style.display = "block";
-      }
-      showAppToast(`Error: ${err.message}`, true);
+      statusEl.textContent = `Error: ${err.message}`;
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      showAppToast(`Error creating EPUB: ${err.message}`, true);
     } finally {
       toggleAppSpinner(false);
     }
@@ -4055,7 +2616,9 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
       statusEl.className = isError ? "status error" : "status success";
     }
     if (isError) showAppToast(message, true);
-    else if (message.toLowerCase().includes("download started") || message.toLowerCase().includes("file saved")) showAppToast(message, false);
+    else if (message.toLowerCase().includes("download started") || message.toLowerCase().includes("file saved") || message.toLowerCase().includes("found") || message.toLowerCase().includes("reading")) {
+      showAppToast(message, false);
+    }
   }
   function resetChapterSelectionUI() {
     if (chapterListUl) chapterListUl.innerHTML = "";
@@ -4119,6 +2682,7 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
     if (!file) {
       fileNameEl.textContent = "";
       if (clearFileBtn) clearFileBtn.style.display = "none";
+      extractBtn.disabled = true;
       return;
     }
     if (!file.name.toLowerCase().endsWith(".epub")) {
@@ -4126,6 +2690,7 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
       fileInput.value = "";
       fileNameEl.textContent = "";
       if (clearFileBtn) clearFileBtn.style.display = "none";
+      extractBtn.disabled = true;
       return;
     }
     currentEpubFilename = file.name;
@@ -4144,8 +2709,11 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
         updateLocalStatus(`Found ${chapters.length} chapters. Review selection and options.`);
         extractBtn.disabled = false;
       } else {
-        if (!statusEl?.textContent?.toLowerCase().includes("error") && !statusEl?.textContent?.toLowerCase().includes("warning")) {
-          updateLocalStatus("No chapters found or ToC unparsable. Some EPUBs might lack a standard ToC.", true);
+        let existingMessage = statusEl?.textContent || "";
+        if (!existingMessage.toLowerCase().includes("error") && !existingMessage.toLowerCase().includes("warning")) {
+          updateLocalStatus("No chapters found or ToC unparsable. EPUB might lack a standard ToC or be structured differently.", true);
+        } else if (existingMessage.toLowerCase().includes("warning")) {
+          updateLocalStatus("Table of Contents link was found, but no chapter items could be extracted. Check EPUB structure.", true);
         }
         extractBtn.disabled = true;
       }
@@ -4158,12 +2726,19 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
     }
   });
   extractBtn.addEventListener("click", async () => {
+    statusEl.style.display = "none";
     if (!currentZipInstance || currentTocEntries.length === 0) {
       updateLocalStatus("Cannot extract: No EPUB loaded or no chapters found.", true);
+      fileInput.focus();
+      return;
+    }
+    const selectedChapterCheckboxes = chapterListUl.querySelectorAll('input[type="checkbox"]:checked');
+    if (selectedChapterCheckboxes.length === 0) {
+      updateLocalStatus("No chapters selected to extract. Please select at least one chapter.", true);
       return;
     }
     const selectedChapters = [];
-    chapterListUl.querySelectorAll('input[type="checkbox"]:checked').forEach((cb) => {
+    selectedChapterCheckboxes.forEach((cb) => {
       const checkbox = cb;
       const href = checkbox.getAttribute("data-chapter-href");
       const entry = currentTocEntries.find((e) => e.href === href);
@@ -4171,9 +2746,17 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
         selectedChapters.push(entry);
       }
     });
-    if (selectedChapters.length === 0) {
-      updateLocalStatus("No chapters selected to extract. Please select at least one chapter.", true);
-      return;
+    let numLinesToRemove = 0;
+    if (enableRemoveLinesToggle.checked) {
+      numLinesToRemove = parseInt(linesToRemoveInput.value, 10);
+      if (isNaN(numLinesToRemove) || numLinesToRemove < 0) {
+        showAppToast('Invalid "Number of lines to remove". Must be 0 or greater.', true);
+        statusEl.textContent = 'Error: "Number of lines to remove" must be 0 or greater.';
+        statusEl.className = "status error";
+        statusEl.style.display = "block";
+        linesToRemoveInput.focus();
+        return;
+      }
     }
     if (Capacitor.isNativePlatform()) {
       Haptics.impact({ style: ImpactStyle.Light });
@@ -4184,13 +2767,6 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
     const outputZip = new JSZip();
     let filesAdded = 0;
     const totalChaptersToProcess = selectedChapters.length;
-    let numLinesToRemove = 0;
-    if (enableRemoveLinesToggle.checked) {
-      numLinesToRemove = parseInt(linesToRemoveInput.value, 10);
-      if (isNaN(numLinesToRemove) || numLinesToRemove < 0) {
-        numLinesToRemove = 0;
-      }
-    }
     try {
       updateLocalStatus(`Starting chapter extraction (0/${totalChaptersToProcess})...`);
       for (let i = 0; i < totalChaptersToProcess; i++) {
@@ -4235,15 +2811,16 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
         const zipBlob = await outputZip.generateAsync({ type: "blob", compression: "DEFLATE" });
         const downloadFilenameBase = currentEpubFilename.replace(/\.epub$/i, "") || "epub_content";
         const finalFilename = `${sanitizeFilenameForZip(downloadFilenameBase)}_chapters.zip`;
-        await triggerDownload2(zipBlob, finalFilename, "application/zip", updateLocalStatus);
+        await triggerDownload2(zipBlob, finalFilename, "application/zip", showAppToast);
         updateLocalStatus(`Download started / File saved (${filesAdded}/${totalChaptersToProcess} chapters).`);
         if (downloadSec && downloadLink) {
           downloadLink.href = "#";
-          downloadLink.download = finalFilename;
+          downloadLink.setAttribute("download", finalFilename);
+          downloadLink.textContent = `Download ${finalFilename}`;
           downloadSec.style.display = "block";
         }
       } else {
-        updateLocalStatus("Extraction complete, but no chapter content was retrieved or all content was removed by line filter. Ensure EPUB content is as expected and check 'lines to remove' setting.", true);
+        updateLocalStatus("Extraction complete, but no chapter content was retrieved or all content was removed. Check EPUB and options.", true);
       }
     } catch (err) {
       console.error("Error during chapter extraction or ZIP creation:", err);
@@ -4284,7 +2861,6 @@ function initializeCreateBackupFromZip(showAppToast, toggleAppSpinner) {
       tooltipTrigger.classList.remove("active");
     }
   });
-  createBtn.disabled = true;
   zipFileInput.addEventListener("change", () => {
     createBtn.disabled = !(zipFileInput.files && zipFileInput.files.length > 0);
     if (statusMessageEl) statusMessageEl.style.display = "none";
@@ -4306,7 +2882,6 @@ function initializeCreateBackupFromZip(showAppToast, toggleAppSpinner) {
   createBtn.addEventListener("click", async () => {
     if (Capacitor.isNativePlatform()) Haptics.impact({ style: ImpactStyle.Light });
     if (statusMessageEl) statusMessageEl.style.display = "none";
-    toggleAppSpinner(true);
     if (!zipFileInput.files || zipFileInput.files.length === 0) {
       showAppToast("Please upload a ZIP file.", true);
       if (statusMessageEl) {
@@ -4314,10 +2889,10 @@ function initializeCreateBackupFromZip(showAppToast, toggleAppSpinner) {
         statusMessageEl.className = "status error";
         statusMessageEl.style.display = "block";
       }
-      toggleAppSpinner(false);
+      zipFileInput.focus();
       return;
     }
-    const projectTitle = projectTitleInput.value;
+    const projectTitle = projectTitleInput.value.trim();
     if (!projectTitle) {
       showAppToast("Project Title is required.", true);
       if (statusMessageEl) {
@@ -4325,15 +2900,36 @@ function initializeCreateBackupFromZip(showAppToast, toggleAppSpinner) {
         statusMessageEl.className = "status error";
         statusMessageEl.style.display = "block";
       }
-      toggleAppSpinner(false);
+      projectTitleInput.focus();
       return;
     }
+    const effectiveStartNumber = parseInt(startNumberInput.value, 10);
+    if (isNaN(effectiveStartNumber) || effectiveStartNumber < 1) {
+      showAppToast("Start Number must be 1 or greater.", true);
+      if (statusMessageEl) {
+        statusMessageEl.textContent = "Error: Start Number must be 1 or greater.";
+        statusMessageEl.className = "status error";
+        statusMessageEl.style.display = "block";
+      }
+      startNumberInput.focus();
+      return;
+    }
+    const numExtraChapters = parseInt(extraChaptersInput.value, 10);
+    if (isNaN(numExtraChapters) || numExtraChapters < 0) {
+      showAppToast("Extra Empty Chapters must be 0 or greater.", true);
+      if (statusMessageEl) {
+        statusMessageEl.textContent = "Error: Extra Chapters must be 0 or greater.";
+        statusMessageEl.className = "status error";
+        statusMessageEl.style.display = "block";
+      }
+      extraChaptersInput.focus();
+      return;
+    }
+    toggleAppSpinner(true);
     const file = zipFileInput.files[0];
-    const description = descriptionInput.value;
+    const description = descriptionInput.value.trim();
     const uniqueCodeProvided = uniqueCodeInput.value.trim();
     const chapterPatternValue = chapterPatternInput.value.trim();
-    const effectiveStartNumber = parseInt(startNumberInput.value, 10) || 1;
-    const numExtraChapters = parseInt(extraChaptersInput.value, 10) || 0;
     try {
       const zip = await JSZip.loadAsync(file);
       const scenes = [];
@@ -4405,7 +3001,7 @@ function initializeCreateBackupFromZip(showAppToast, toggleAppSpinner) {
           if (chapterPatternValue) {
             chapterTitle = `${chapterPatternValue}${currentRank}`;
           } else {
-            chapterTitle = `Extra Chapter ${currentRank}`;
+            chapterTitle = `Chapter ${currentRank}`;
           }
           const emptySceneContent = { blocks: [{ type: "text", align: "left", text: "" }] };
           scenes.push({
@@ -4426,7 +3022,14 @@ function initializeCreateBackupFromZip(showAppToast, toggleAppSpinner) {
         }
       }
       if (scenes.length === 0) {
-        throw new Error("No .txt files found in ZIP and no extra chapters requested. Backup not created.");
+        showAppToast("No .txt files found in ZIP and no extra chapters requested. Backup not created.", true);
+        if (statusMessageEl) {
+          statusMessageEl.textContent = "Error: No chapters to include in backup.";
+          statusMessageEl.className = "status error";
+          statusMessageEl.style.display = "block";
+        }
+        toggleAppSpinner(false);
+        return;
       }
       const uniqueCode = uniqueCodeProvided || Math.floor(Math.random() * 4294967295).toString(16).padStart(8, "0");
       const now = Date.now();
@@ -4449,9 +3052,7 @@ function initializeCreateBackupFromZip(showAppToast, toggleAppSpinner) {
         title: projectTitle,
         description,
         show_table_of_contents: true,
-        // Hardcoded
         apply_automatic_indentation: false,
-        // Hardcoded
         last_update_date: now,
         last_backup_date: now,
         revisions: [{
@@ -4498,66 +3099,54 @@ function initializeCreateNewBackup(showAppToast, toggleAppSpinner) {
   const chaptersInput = document.getElementById("createChapters");
   const startNumberInput = document.getElementById("createStartNumber");
   const prefixInput = document.getElementById("createPrefix");
-  if (!createBtn || !titleInput || !descInput || !codeInputElement || !chaptersInput || !startNumberInput || !prefixInput) {
+  if (!createBtn || !titleInput || !descInput || !codeInputElement || !chaptersInput || !startNumberInput || !prefixInput || !statusEl) {
     console.error("Create New Backup: One or more UI elements not found. Initialization failed.");
     return;
   }
   createBtn.addEventListener("click", async () => {
     if (Capacitor.isNativePlatform()) Haptics.impact({ style: ImpactStyle.Light });
-    if (statusEl) statusEl.style.display = "none";
+    statusEl.style.display = "none";
+    const title = titleInput.value.trim();
+    const desc = descInput.value.trim();
+    const codeInputVal = codeInputElement.value.trim();
+    const count = parseInt(chaptersInput.value, 10);
+    const startNum = parseInt(startNumberInput.value, 10);
+    const prefix = prefixInput.value.trim();
+    if (!title) {
+      showAppToast("Project Title is required.", true);
+      statusEl.textContent = "Error: Project Title is required.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      titleInput.focus();
+      return;
+    }
+    if (isNaN(count) || count < 1) {
+      showAppToast("Number of Chapters must be at least 1.", true);
+      statusEl.textContent = "Error: Number of Chapters must be at least 1.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      chaptersInput.focus();
+      return;
+    }
+    if (isNaN(startNum) || startNum < 1) {
+      showAppToast("Start Number must be at least 1.", true);
+      statusEl.textContent = "Error: Start Number must be at least 1.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      startNumberInput.focus();
+      return;
+    }
     toggleAppSpinner(true);
     try {
-      const currentTitleInput = document.getElementById("createProjectTitle");
-      const currentDescInput = document.getElementById("createDescription");
-      const currentCodeInputElement = document.getElementById("createUniqueCode");
-      const currentChaptersInput = document.getElementById("createChapters");
-      const currentStartNumberInput = document.getElementById("createStartNumber");
-      const currentPrefixInput = document.getElementById("createPrefix");
-      if (!currentTitleInput || !currentDescInput || !currentCodeInputElement || !currentChaptersInput || !currentStartNumberInput || !currentPrefixInput) {
-        showAppToast("A required form element is missing. Please reload the app.", true);
-        if (statusEl) {
-          statusEl.textContent = "Error: A required form element is missing.";
-          statusEl.className = "status error";
-          statusEl.style.display = "block";
-        }
-        toggleAppSpinner(false);
-        return;
-      }
-      const title = currentTitleInput.value;
-      const desc = currentDescInput.value;
-      const codeInputVal = currentCodeInputElement.value.trim();
-      const count = parseInt(currentChaptersInput.value, 10) || 0;
-      const startNum = parseInt(currentStartNumberInput.value, 10) || 1;
-      const prefix = currentPrefixInput.value;
       const showTOC = true;
       const autoIndent = false;
-      if (!title || count < 1) {
-        showAppToast("Project Title and at least 1 chapter are required.", true);
-        if (statusEl) {
-          statusEl.textContent = "Error: Project Title and at least 1 chapter are required.";
-          statusEl.className = "status error";
-          statusEl.style.display = "block";
-        }
-        toggleAppSpinner(false);
-        return;
-      }
-      if (startNum < 1) {
-        showAppToast("Start Number must be 1 or greater.", true);
-        if (statusEl) {
-          statusEl.textContent = "Error: Start Number must be 1 or greater.";
-          statusEl.className = "status error";
-          statusEl.style.display = "block";
-        }
-        toggleAppSpinner(false);
-        return;
-      }
       const uniqueCode = codeInputVal || Math.floor(Math.random() * 4294967295).toString(16).padStart(8, "0");
       const now = Date.now();
       const scenes = [];
       const sections = [];
       for (let i = 0; i < count; i++) {
         const currentChapterNumber = startNum + i;
-        const chapTitle = prefix ? `${prefix}${currentChapterNumber}` : currentChapterNumber.toString();
+        const chapTitle = prefix ? `${prefix}${currentChapterNumber}` : `Chapter ${currentChapterNumber}`;
         const sceneCode = `scene${currentChapterNumber}`;
         const sectionCode = `section${currentChapterNumber}`;
         const sceneContent = { blocks: [{ type: "text", align: "left", text: "" }] };
@@ -4574,7 +3163,6 @@ function initializeCreateNewBackup(showAppToast, toggleAppSpinner) {
           synopsis: "",
           ranking: currentChapterNumber,
           section_scenes: [{ code: sceneCode, ranking: 1 }]
-          // Inner ranking of scene within section remains 1
         });
       }
       const backup = {
@@ -4601,21 +3189,18 @@ function initializeCreateNewBackup(showAppToast, toggleAppSpinner) {
         }]
       };
       const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
-      const filename = `${title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "new_backup"}.json`;
+      const filenameBase = title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "new_backup";
+      const filename = `${filenameBase}.json`;
       await triggerDownload(blob, filename, "application/json", showAppToast);
-      if (statusEl) {
-        statusEl.textContent = "Backup file created successfully. Download started.";
-        statusEl.className = "status success";
-        statusEl.style.display = "block";
-      }
+      statusEl.textContent = "Backup file created successfully. Download started.";
+      statusEl.className = "status success";
+      statusEl.style.display = "block";
       showAppToast("Backup file created successfully.");
     } catch (err) {
       showAppToast(err.message || "Error creating backup.", true);
-      if (statusEl) {
-        statusEl.textContent = `Error: ${err.message || "Could not create backup."}`;
-        statusEl.className = "status error";
-        statusEl.style.display = "block";
-      }
+      statusEl.textContent = `Error: ${err.message || "Could not create backup."}`;
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
       console.error("Create New Backup Error:", err);
     } finally {
       toggleAppSpinner(false);
@@ -4631,12 +3216,23 @@ function initializeExtendBackup(showAppToast, toggleAppSpinner) {
   const fileNameEl = document.getElementById("extendBackupFileName");
   const clearFileBtn = document.getElementById("clearExtendBackupFile");
   const extraChaptersInput = document.getElementById("extendExtraChapters");
+  const startNumberInput = document.getElementById("extendStartNumber");
   const prefixInput = document.getElementById("extendPrefix");
   const statusEl = document.getElementById("statusExtendBackup");
-  if (!extendBtn || !fileInput || !fileNameEl || !clearFileBtn || !extraChaptersInput || !prefixInput) {
+  const tooltipTrigger = document.querySelector("#extendBackupApp .tooltip-trigger");
+  if (!extendBtn || !fileInput || !fileNameEl || !clearFileBtn || !extraChaptersInput || !startNumberInput || !prefixInput || !statusEl || !tooltipTrigger) {
     console.error("Extend Backup: One or more UI elements not found. Initialization failed.");
     return;
   }
+  tooltipTrigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    tooltipTrigger.classList.toggle("active");
+  });
+  document.addEventListener("click", (e) => {
+    if (tooltipTrigger.classList.contains("active") && !tooltipTrigger.contains(e.target)) {
+      tooltipTrigger.classList.remove("active");
+    }
+  });
   fileInput.addEventListener("change", () => {
     if (fileInput.files && fileInput.files.length > 0) {
       fileNameEl.textContent = `Selected: ${fileInput.files[0].name}`;
@@ -4645,80 +3241,89 @@ function initializeExtendBackup(showAppToast, toggleAppSpinner) {
       fileNameEl.textContent = "";
       if (clearFileBtn) clearFileBtn.style.display = "none";
     }
-    if (statusEl) statusEl.style.display = "none";
+    statusEl.style.display = "none";
   });
   clearFileBtn.addEventListener("click", () => {
     fileInput.value = "";
     fileNameEl.textContent = "";
     clearFileBtn.style.display = "none";
-    if (statusEl) statusEl.style.display = "none";
+    statusEl.style.display = "none";
   });
   extendBtn.addEventListener("click", () => {
     if (Capacitor.isNativePlatform()) Haptics.impact({ style: ImpactStyle.Light });
+    statusEl.style.display = "none";
     if (!fileInput.files || !fileInput.files.length) {
       showAppToast("Please upload a backup file to extend.", true);
-      if (statusEl) {
-        statusEl.textContent = "Error: Please upload a backup file.";
-        statusEl.className = "status error";
-        statusEl.style.display = "block";
-      }
+      statusEl.textContent = "Error: Please upload a backup file.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      fileInput.focus();
       return;
     }
-    if (statusEl) statusEl.style.display = "none";
-    toggleAppSpinner(true);
-    const extraChapters = parseInt(extraChaptersInput.value, 10) || 0;
-    if (extraChapters <= 0) {
+    const extraChapters = parseInt(extraChaptersInput.value, 10);
+    if (isNaN(extraChapters) || extraChapters <= 0) {
       showAppToast("Number of extra chapters must be greater than 0.", true);
-      if (statusEl) {
-        statusEl.textContent = "Error: Number of extra chapters must be greater than 0.";
-        statusEl.className = "status error";
-        statusEl.style.display = "block";
-      }
-      toggleAppSpinner(false);
+      statusEl.textContent = "Error: Number of extra chapters must be greater than 0.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      extraChaptersInput.focus();
       return;
     }
-    const prefix = prefixInput.value;
+    const newChaptersStartNum = parseInt(startNumberInput.value, 10);
+    if (isNaN(newChaptersStartNum) || newChaptersStartNum < 1) {
+      showAppToast("Start Number for New Chapters must be 1 or greater.", true);
+      statusEl.textContent = "Error: Start Number for New Chapters must be 1 or greater.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      startNumberInput.focus();
+      return;
+    }
+    toggleAppSpinner(true);
+    const prefix = prefixInput.value.trim();
     const reader = new FileReader();
     reader.onerror = () => {
       showAppToast("Error reading file.", true);
-      if (statusEl) {
-        statusEl.textContent = "Error: Could not read the uploaded file.";
-        statusEl.className = "status error";
-        statusEl.style.display = "block";
-      }
+      statusEl.textContent = "Error: Could not read the uploaded file.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
       toggleAppSpinner(false);
     };
     reader.onload = async (e) => {
       try {
-        const backup = JSON.parse(e.target?.result);
+        if (!e.target || typeof e.target.result !== "string") {
+          throw new Error("File content could not be read.");
+        }
+        const backup = JSON.parse(e.target.result);
         const rev = backup.revisions && backup.revisions[0];
         if (!rev || !rev.scenes || !rev.sections) {
           throw new Error("Invalid backup file structure for extending.");
         }
-        let maxRanking = 0;
+        let maxExistingRanking = 0;
         rev.scenes.forEach((s2) => {
-          if (s2.ranking > maxRanking) maxRanking = s2.ranking;
+          if (s2.ranking > maxExistingRanking) maxExistingRanking = s2.ranking;
         });
         rev.sections.forEach((s2) => {
-          if (s2.ranking > maxRanking) maxRanking = s2.ranking;
+          if (s2.ranking > maxExistingRanking) maxExistingRanking = s2.ranking;
         });
-        for (let i = 1; i <= extraChapters; i++) {
-          const num = maxRanking + i;
-          const chapTitle = prefix ? prefix + num : `Chapter ${num}`;
-          const sceneCode = "scene" + num;
+        for (let i = 0; i < extraChapters; i++) {
+          const titleAndCodeNumPart = newChaptersStartNum + i;
+          const actualRanking = maxExistingRanking + 1 + i;
+          const chapTitle = prefix ? `${prefix}${titleAndCodeNumPart}` : `Chapter ${titleAndCodeNumPart}`;
+          const sceneCode = `scene${titleAndCodeNumPart}`;
+          const sectionCode = `section${titleAndCodeNumPart}`;
           const sceneContent = { blocks: [{ type: "text", align: "left", text: "" }] };
           rev.scenes.push({
             code: sceneCode,
             title: chapTitle,
             text: JSON.stringify(sceneContent),
-            ranking: num,
+            ranking: actualRanking,
             status: "1"
           });
           rev.sections.push({
-            code: "section" + num,
+            code: sectionCode,
             title: chapTitle,
             synopsis: "",
-            ranking: num,
+            ranking: actualRanking,
             section_scenes: [{ code: sceneCode, ranking: 1 }]
           });
         }
@@ -4727,21 +3332,18 @@ function initializeExtendBackup(showAppToast, toggleAppSpinner) {
         backup.last_backup_date = now;
         if (rev) rev.date = now;
         const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
-        const filename = `${backup.title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "extended_backup"}.json`;
+        const filenameBase = backup.title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "extended_backup";
+        const filename = `${filenameBase}.json`;
         await triggerDownload(blob, filename, "application/json", showAppToast);
-        if (statusEl) {
-          statusEl.textContent = `Backup extended with ${extraChapters} chapter(s). Download started.`;
-          statusEl.className = "status success";
-          statusEl.style.display = "block";
-        }
+        statusEl.textContent = `Backup extended with ${extraChapters} chapter(s). Download started.`;
+        statusEl.className = "status success";
+        statusEl.style.display = "block";
         showAppToast("Backup extended successfully.");
       } catch (err) {
         showAppToast(err.message || "Error extending backup.", true);
-        if (statusEl) {
-          statusEl.textContent = `Error: ${err.message || "Could not extend backup."}`;
-          statusEl.className = "status error";
-          statusEl.style.display = "block";
-        }
+        statusEl.textContent = `Error: ${err.message || "Could not extend backup."}`;
+        statusEl.className = "status error";
+        statusEl.style.display = "block";
         console.error("Extend Backup Error:", err);
       } finally {
         toggleAppSpinner(false);
@@ -4784,10 +3386,13 @@ async function processMergeBackupFiles(files, mergedTitle, mergedDesc, chapterPr
             }
           });
         }
+      } else {
+        console.warn(`Skipping file ${file.name} in merge: No valid revision found.`);
+        showAppToast(`Skipped ${file.name} (no revision data).`, true);
       }
     } catch (e) {
       console.warn(`Skipping file ${file.name} in merge due to parse error:`, e);
-      showAppToast(`Skipped ${file.name} during merge (invalid format).`, true);
+      showAppToast(`Skipped ${file.name} during merge (invalid JSON format).`, true);
     }
   }
   const finalStatuses = allStatuses.sort((a, b) => {
@@ -4839,7 +3444,6 @@ async function processMergeBackupFiles(files, mergedTitle, mergedDesc, chapterPr
   return {
     version: 4,
     code: Math.floor(Math.random() * 4294967295).toString(16).padStart(8, "0"),
-    // New unique code
     title: mergedTitle,
     description: mergedDesc,
     show_table_of_contents: true,
@@ -4866,7 +3470,7 @@ function initializeMergeBackup(showAppToast, toggleAppSpinner) {
   const chapterPrefixInput = document.getElementById("mergePrefix");
   const preserveTitlesCheckbox = document.getElementById("mergePreserveTitles");
   const statusEl = document.getElementById("statusMergeBackup");
-  if (!mergeBtn || !filesInput || !fileNamesEl || !clearFilesBtn || !mergedTitleInput || !mergedDescInput || !chapterPrefixInput || !preserveTitlesCheckbox) {
+  if (!mergeBtn || !filesInput || !fileNamesEl || !clearFilesBtn || !mergedTitleInput || !mergedDescInput || !chapterPrefixInput || !preserveTitlesCheckbox || !statusEl) {
     console.error("Merge Backup: One or more UI elements not found. Initialization failed.");
     return;
   }
@@ -4883,40 +3487,38 @@ function initializeMergeBackup(showAppToast, toggleAppSpinner) {
       fileNamesEl.textContent = "No files selected.";
       if (clearFilesBtn) clearFilesBtn.style.display = "none";
     }
-    if (statusEl) statusEl.style.display = "none";
+    statusEl.style.display = "none";
   });
   clearFilesBtn.addEventListener("click", () => {
     filesInput.value = "";
     fileNamesEl.textContent = "No files selected.";
     clearFilesBtn.style.display = "none";
-    if (statusEl) statusEl.style.display = "none";
+    statusEl.style.display = "none";
   });
   mergeBtn.addEventListener("click", async () => {
     if (Capacitor.isNativePlatform()) Haptics.impact({ style: ImpactStyle.Light });
+    statusEl.style.display = "none";
     const files = filesInput.files ? Array.from(filesInput.files) : [];
-    const mergedTitle = mergedTitleInput.value;
-    const mergedDesc = mergedDescInput.value;
-    const chapterPrefix = chapterPrefixInput.value;
+    const mergedTitle = mergedTitleInput.value.trim();
+    const mergedDesc = mergedDescInput.value.trim();
+    const chapterPrefix = chapterPrefixInput.value.trim();
     const preserveOriginalTitles = preserveTitlesCheckbox.checked;
     if (!files.length) {
       showAppToast("Select at least one backup file to merge.", true);
-      if (statusEl) {
-        statusEl.textContent = "Error: Select at least one backup file.";
-        statusEl.className = "status error";
-        statusEl.style.display = "block";
-      }
+      statusEl.textContent = "Error: Select at least one backup file.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      filesInput.focus();
       return;
     }
     if (!mergedTitle) {
       showAppToast("Merged Project Title is required.", true);
-      if (statusEl) {
-        statusEl.textContent = "Error: Merged Project Title is required.";
-        statusEl.className = "status error";
-        statusEl.style.display = "block";
-      }
+      statusEl.textContent = "Error: Merged Project Title is required.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      mergedTitleInput.focus();
       return;
     }
-    if (statusEl) statusEl.style.display = "none";
     toggleAppSpinner(true);
     try {
       const mergedData = await processMergeBackupFiles(
@@ -4930,29 +3532,26 @@ function initializeMergeBackup(showAppToast, toggleAppSpinner) {
       if (mergedData.revisions[0].scenes.length === 0) {
         showAppToast("No valid chapters found in the selected files to merge.", true);
         if (statusEl) {
-          statusEl.textContent = "Error: No valid chapters to merge.";
+          statusEl.textContent = "Error: No valid chapters to merge from selected files.";
           statusEl.className = "status error";
           statusEl.style.display = "block";
         }
-        throw new Error("Merge resulted in no scenes.");
-      }
-      const blob = new Blob([JSON.stringify(mergedData, null, 2)], { type: "application/json" });
-      const filename = `${mergedTitle.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "merged_backup"}.json`;
-      await triggerDownload(blob, filename, "application/json", showAppToast);
-      if (statusEl) {
+      } else {
+        const blob = new Blob([JSON.stringify(mergedData, null, 2)], { type: "application/json" });
+        const filenameBase = mergedTitle.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "merged_backup";
+        const filename = `${filenameBase}.json`;
+        await triggerDownload(blob, filename, "application/json", showAppToast);
         statusEl.textContent = `Backup files merged into "${mergedTitle}". Download started.`;
         statusEl.className = "status success";
         statusEl.style.display = "block";
+        showAppToast("Backup files merged successfully.");
       }
-      showAppToast("Backup files merged successfully.");
     } catch (err) {
-      if (err.message !== "Merge resulted in no scenes.") {
+      if (!(statusEl.textContent && statusEl.textContent.includes("No valid chapters"))) {
         showAppToast(err.message || "Error merging backup files.", true);
-        if (statusEl) {
-          statusEl.textContent = `Error: ${err.message || "Could not merge backups."}`;
-          statusEl.className = "status error";
-          statusEl.style.display = "block";
-        }
+        statusEl.textContent = `Error: ${err.message || "Could not merge backups."}`;
+        statusEl.className = "status error";
+        statusEl.style.display = "block";
       }
       console.error("Merge Backup Error:", err);
     } finally {
@@ -4992,7 +3591,7 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
       baseBackupFileNameEl.textContent = "";
       clearBaseBackupFileBtn.style.display = "none";
     }
-    if (statusEl) statusEl.style.display = "none";
+    statusEl.style.display = "none";
     checkEnableButton();
   });
   clearBaseBackupFileBtn.addEventListener("click", () => {
@@ -5000,7 +3599,7 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
     selectedBaseFile = null;
     baseBackupFileNameEl.textContent = "";
     clearBaseBackupFileBtn.style.display = "none";
-    if (statusEl) statusEl.style.display = "none";
+    statusEl.style.display = "none";
     checkEnableButton();
   });
   zipFileInput.addEventListener("change", (e) => {
@@ -5012,7 +3611,7 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
       zipFileNameEl.textContent = "";
       clearZipFileBtn.style.display = "none";
     }
-    if (statusEl) statusEl.style.display = "none";
+    statusEl.style.display = "none";
     checkEnableButton();
   });
   clearZipFileBtn.addEventListener("click", () => {
@@ -5020,40 +3619,43 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
     selectedZipFile = null;
     zipFileNameEl.textContent = "";
     clearZipFileBtn.style.display = "none";
-    if (statusEl) statusEl.style.display = "none";
+    statusEl.style.display = "none";
     checkEnableButton();
   });
   augmentBtn.addEventListener("click", async () => {
-    if (!selectedBaseFile || !selectedZipFile) {
-      showAppToast("Please select both a base backup file and a ZIP file.", true);
-      if (statusEl) {
-        statusEl.textContent = "Error: Both base backup and ZIP file are required.";
-        statusEl.className = "status error";
-        statusEl.style.display = "block";
-      }
+    statusEl.style.display = "none";
+    if (!selectedBaseFile) {
+      showAppToast("Please select a base backup file.", true);
+      statusEl.textContent = "Error: Base backup file is required.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      baseBackupFileInput.focus();
+      return;
+    }
+    if (!selectedZipFile) {
+      showAppToast("Please select a ZIP file.", true);
+      statusEl.textContent = "Error: ZIP file is required.";
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
+      zipFileInput.focus();
       return;
     }
     if (Capacitor.isNativePlatform()) Haptics.impact({ style: ImpactStyle.Light });
-    if (statusEl) statusEl.style.display = "none";
     toggleAppSpinner(true);
     const prefix = prefixInput.value.trim();
     const preserveTitles = preserveTxtTitlesCheckbox.checked;
     try {
       const baseFileText = await selectedBaseFile.text();
-      let backupData = JSON.parse(baseFileText);
-      if (!backupData.revisions || backupData.revisions.length === 0) {
-        backupData.revisions = [{
-          number: 1,
-          date: Date.now(),
-          book_progresses: [],
-          statuses: [{ code: "1", title: "Todo", color: -2697255, ranking: 1 }],
-          scenes: [],
-          sections: []
-        }];
+      let backupData;
+      try {
+        backupData = JSON.parse(baseFileText);
+      } catch (jsonErr) {
+        throw new Error("Base backup file is not valid JSON.");
+      }
+      if (!backupData.revisions || backupData.revisions.length === 0 || !backupData.revisions[0].scenes || !backupData.revisions[0].sections) {
+        throw new Error("Base backup file has an invalid or incomplete structure.");
       }
       const currentRevision = backupData.revisions[0];
-      if (!currentRevision.scenes) currentRevision.scenes = [];
-      if (!currentRevision.sections) currentRevision.sections = [];
       const zip = await JSZip.loadAsync(selectedZipFile);
       const chapterFilePromises = [];
       zip.forEach((relativePath, zipEntry) => {
@@ -5066,8 +3668,12 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
       const chapterFiles = await Promise.all(chapterFilePromises);
       chapterFiles.sort((a, b) => a.name.localeCompare(b.name, void 0, { numeric: true, sensitivity: "base" }));
       if (chapterFiles.length === 0) {
-        showAppToast("No .txt files found in the ZIP archive.", true);
-        throw new Error("No .txt files in ZIP.");
+        showAppToast("No .txt files found in the ZIP archive. No changes made.", false);
+        statusEl.textContent = "Info: No .txt files found in ZIP. Backup not augmented.";
+        statusEl.className = "status success";
+        statusEl.style.display = "block";
+        toggleAppSpinner(false);
+        return;
       }
       let maxExistingRank = 0;
       currentRevision.scenes.forEach((s2) => {
@@ -5123,7 +3729,6 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
           text: sceneText,
           ranking: newRank,
           status: "1"
-          // Default status
         });
         currentRevision.sections.push({
           code: sectionCode,
@@ -5153,9 +3758,9 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
       });
       if (currentRevision.book_progresses && currentRevision.book_progresses.length > 0) {
         const lastProgress = currentRevision.book_progresses[currentRevision.book_progresses.length - 1];
-        lastProgress.word_count = totalWordCount;
         const today = /* @__PURE__ */ new Date();
         if (lastProgress.year === today.getFullYear() && lastProgress.month === today.getMonth() + 1 && lastProgress.day === today.getDate()) {
+          lastProgress.word_count = totalWordCount;
         } else {
           currentRevision.book_progresses.push({
             year: today.getFullYear(),
@@ -5177,19 +3782,15 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
       const safeFileNameBase = backupData.title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_");
       const filename = `${safeFileNameBase || "augmented_backup"}.json`;
       await triggerDownload(blob, filename, "application/json", showAppToast);
-      if (statusEl) {
-        statusEl.textContent = `Backup augmented with ${chapterFiles.length} chapter(s) from ZIP. Download started.`;
-        statusEl.className = "status success";
-        statusEl.style.display = "block";
-      }
+      statusEl.textContent = `Backup augmented with ${chapterFiles.length} chapter(s) from ZIP. Download started.`;
+      statusEl.className = "status success";
+      statusEl.style.display = "block";
       showAppToast(`Backup augmented successfully with ${chapterFiles.length} chapters.`);
     } catch (err) {
       console.error("Augment Backup with ZIP Error:", err);
-      if (statusEl) {
-        statusEl.textContent = `Error: ${err.message || "Could not augment backup."}`;
-        statusEl.className = "status error";
-        statusEl.style.display = "block";
-      }
+      statusEl.textContent = `Error: ${err.message || "Could not augment backup."}`;
+      statusEl.className = "status error";
+      statusEl.style.display = "block";
       showAppToast(`Error: ${err.message || "Could not augment backup."}`, true);
     } finally {
       toggleAppSpinner(false);
@@ -5713,8 +4314,9 @@ window.showDashboard = () => {
   showDashboard(false, toolSectionsMap);
 };
 function registerServiceWorker() {
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./service-worker.js").then((registration) => {
+  if ("serviceWorker" in navigator && (window.location.protocol === "http:" || window.location.protocol === "https:")) {
+    const swUrl = new URL("service-worker.js", window.location.href).href;
+    navigator.serviceWorker.register(swUrl).then((registration) => {
       console.log("Service Worker registered with scope:", registration.scope);
     }).catch((error) => {
       console.error("Service Worker registration failed:", error);

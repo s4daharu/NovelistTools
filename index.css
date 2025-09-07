@@ -228,15 +228,33 @@ textarea:focus-visible {
 .split-btn { background: linear-gradient(135deg, #26c6da, var(--accent-color)); } 
 .download-btn { background: linear-gradient(135deg, #ff7043, #e64a19); }
 
-.mode-section, .options-section {
+.mode-section {
   text-align: center;
   margin-bottom: 25px;
 }
+/* .options-section has been mostly replaced by repeated option-groups */
 
-.mode-section select,
+
+.option-group { 
+  margin-bottom: 20px; 
+  position: relative; 
+}
+
+/* Common styling for labels within an option-group */
+.option-group > label:not(.checkbox-label-wrapper) { 
+  color: #ffffffcc;
+  margin-bottom: 8px; /* Space between label and input */
+  display: block; /* Ensure label is on its own line */
+  font-size: 14px; /* Slightly smaller for differentiation */
+  font-weight: 500;
+  user-select: none;
+}
+
+/* Common styling for inputs, selects, textareas within an option-group */
 .option-group input[type="text"],
 .option-group input[type="number"],
-.option-group select { 
+.option-group select,
+.option-group textarea { 
   background: var(--input-background);
   border: 2px solid transparent;
   border-radius: 8px;
@@ -244,29 +262,42 @@ textarea:focus-visible {
   font-size: 14px;
   color: var(--primary-text-color);
   width: 100%;
-  max-width: 300px;
-  margin: 10px auto 0;
   box-sizing: border-box;
   transition: border-color .3s, box-shadow .3s;
 }
 .option-group input[type="text"]:focus,
 .option-group input[type="number"]:focus,
-.option-group select:focus {
+.option-group select:focus,
+.option-group textarea:focus {
   border-color: var(--input-border-focus);
   box-shadow: 0 0 0 2px var(--focus-outline-color);
 }
 
-
-.option-group { 
-  margin-bottom: 20px; /* Standardized margin */
-  position: relative; /* For tooltip positioning */
+/* Style for file inputs when their label acts as a button, or direct file input styling if not hidden */
+.option-group input[type="file"] {
+    /* If input type=file is directly visible, style it. 
+       Usually it's hidden and a <label class="btn"> is used. */
+    width: 100%;
+    padding: 8px 12px; 
+    margin-top: 5px; /* If label is separate and above */
+    background: var(--input-background);
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: var(--primary-text-color);
+    font-size: 13px; /* Smaller font for file input controls */
 }
-
-.option-group > label:not(.checkbox-label-wrapper) { 
-  color: #ffffffcc;
-  margin-bottom: 8px;
-  display: block;
-  user-select: none;
+.option-group input[type="file"]::file-selector-button {
+    padding: 8px 12px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 6px;
+    background: var(--accent-color);
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.option-group input[type="file"]::file-selector-button:hover {
+    background: var(--accent-color-darker);
 }
 
 
@@ -281,10 +312,10 @@ textarea:focus-visible {
   border-radius: 50%;
   width: 18px;
   height: 18px;
-  line-height: 16px; /* Adjust for vertical centering */
+  line-height: 16px; 
   text-align: center;
   font-size: 12px;
-  position: relative; /* For popup positioning */
+  position: relative; 
 }
 .tooltip-trigger:hover {
   background-color: var(--accent-color);
@@ -301,17 +332,17 @@ textarea:focus-visible {
   padding: 8px 12px;
   position: absolute;
   z-index: 100;
-  bottom: 125%; /* Position above the trigger */
+  bottom: 125%; 
   left: 50%;
-  margin-left: -110px; /* Half of width to center */
+  margin-left: -110px; 
   opacity: 0;
   transition: opacity 0.3s, visibility 0.3s;
   box-shadow: 0 2px 5px rgba(0,0,0,0.3);
   font-size: 13px;
   line-height: 1.4;
-  font-weight: normal; /* Reset bold from trigger */
+  font-weight: normal; 
 }
-.tooltip-text-popup::after { /* Arrow */
+.tooltip-text-popup::after { 
   content: "";
   position: absolute;
   top: 100%;
@@ -322,7 +353,7 @@ textarea:focus-visible {
   border-color: #333 transparent transparent transparent;
 }
 .tooltip-trigger:hover .tooltip-text-popup,
-.tooltip-trigger.active .tooltip-text-popup { /* Show on hover or when active class is added by JS */
+.tooltip-trigger.active .tooltip-text-popup { 
   visibility: visible;
   opacity: 1;
 }
@@ -335,11 +366,13 @@ textarea:focus-visible {
   cursor: pointer;
   user-select: none;
   padding: 5px 0;
-  margin-bottom: 0;
+  margin-bottom: 0; /* Override general option-group margin for checkbox group if nested */
   justify-content: center; 
+  font-size: 14px; /* Ensure consistent text size */
 }
 
 .checkbox-label-wrapper input[type="checkbox"] {
+  /* ... existing checkbox styles ... */
   width: auto;
   height: auto;
   background: transparent;
@@ -383,6 +416,7 @@ textarea:focus-visible {
   box-shadow: 0 0 0 2px var(--focus-outline-color);
 }
 
+
 /* Specific styling for EPUB to ZIP 'lines to remove' input */
 #epubToZipRemoveLinesOptionsGroup {
   padding-left: 0; 
@@ -412,12 +446,13 @@ textarea:focus-visible {
   }
 }
 
-#statusMessage, .status { 
+#statusMessage, .status { /* This is for the per-tool status messages */
   border-radius: 10px;
   padding: 16px;
   margin-top: 20px;
   animation: slideIn .3s ease-out;
   text-align: center; 
+  font-size: 14px;
 }
 #statusMessage.success, .status.success { background-color: var(--success-color); color: white; }
 #statusMessage.error, .status.error { background-color: var(--error-color); color: white; }
@@ -434,18 +469,56 @@ textarea:focus-visible {
   }
 }
 
-/* Backup tool specific styles */
-.operation-selector, .operation-section {
-  margin-bottom: 25px;
+
+/* Filename display and clear button common styles */
+.filename-display-area {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--secondary-text-color);
+  text-align: center;
+  min-height: 20px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.1); /* Subtle background */
+  padding: 5px 8px;
+  border-radius: 6px;
 }
-.operation-selector label, .operation-section label, .operation-section h2 {
-    user-select: none;
+
+.filename-display-area span { 
+  max-width: calc(100% - 30px); 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block; 
+}
+
+.clear-file-btn {
+  background: none;
+  border: none;
+  color: var(--secondary-text-color);
+  font-size: 1.5em; 
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 8px;
+  padding: 0 5px;
+  line-height: 1; 
+  vertical-align: middle;
+  transition: color 0.2s;
+}
+.clear-file-btn:hover {
+  color: var(--primary-text-color);
+}
+.clear-file-btn:focus-visible { 
+  outline: 1px dashed var(--focus-outline-color);
+  outline-offset: 1px;
 }
 
 
-/* General input, textarea, select styling for backup tool (and potentially others) */
-select, input[type="text"], input[type="number"], input[type="file"], textarea {
-  width: 100%;
+textarea { /* General textarea, if not in option-group */
+  resize: vertical;
+  min-height: 60px; 
+  width: 100%; /* Default width for standalone textareas */
   padding: 12px;
   margin-bottom: 15px;
   background: var(--input-background);
@@ -456,71 +529,36 @@ select, input[type="text"], input[type="number"], input[type="file"], textarea {
   box-sizing: border-box;
   transition: border-color .3s, box-shadow .3s;
 }
-select:focus, input[type="text"]:focus, input[type="number"]:focus, input[type="file"]:focus, textarea:focus {
+textarea:focus {
   border-color: var(--input-border-focus); 
   box-shadow: 0 0 0 2px var(--focus-outline-color);
 }
 
-input[type="file"] {
-    padding: 8px 12px; 
+/* Specific textarea heights */
+#findReplaceBackupApp textarea { /* From F&R modernization */
+    min-height: 40px; 
+}
+textarea#createDescription, 
+textarea#mergeDescription, 
+textarea#zipDescription {
+    min-height: 80px; /* More space for descriptions */
+}
+/* Ensure textareas within option-groups inherit option-group specific styles if needed, but the general one is broad. */
+.option-group textarea { /* This will apply option-group styles and override the general if more specific */
+    min-height: 60px; /* Default for option-group textareas */
+}
+.option-group textarea#createDescription, 
+.option-group textarea#mergeDescription, 
+.option-group textarea#zipDescription {
+    min-height: 80px; /* Override for specific description textareas within option-groups */
 }
 
-/* Filename display and clear button */
-.filename-display-area {
-  margin-top: 10px;
-  font-size: 14px;
-  color: var(--secondary-text-color);
-  text-align: center;
-  min-height: 20px; /* Ensure space even when empty */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.filename-display-area span { /* The actual filename text */
-  max-width: calc(100% - 30px); /* Allow space for clear button */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: inline-block; /* For ellipsis to work */
-}
-
-.clear-file-btn {
-  background: none;
-  border: none;
-  color: var(--secondary-text-color);
-  font-size: 1.5em; /* Larger, more clickable 'x' */
-  font-weight: bold;
-  cursor: pointer;
-  margin-left: 8px;
-  padding: 0 5px;
-  line-height: 1; /* Helps with vertical alignment */
-  vertical-align: middle;
-  transition: color 0.2s;
-}
-.clear-file-btn:hover {
-  color: var(--primary-text-color);
-}
-.clear-file-btn:focus-visible { /* Specific focus for clear button */
-  outline: 1px dashed var(--focus-outline-color);
-  outline-offset: 1px;
-}
-
-
-textarea {
-  resize: vertical;
-  min-height: 60px; /* Default for most textareas */
-}
-/* Specific textarea heights for Find/Replace */
-#findReplaceBackupApp textarea {
-    min-height: 40px; /* Shorter for find/replace patterns */
-}
 
 
 .btn-primary { background: linear-gradient(135deg, #26c6da, var(--accent-color)); }
 .btn-accent { background: linear-gradient(135deg, #7e57c2, #5e37b5); }
 
-.status-toast {
+.status-toast { /* Global toast notification */
   position: fixed;
   bottom: calc(20px + var(--safe-area-inset-bottom)); 
   left: 50%;
@@ -617,30 +655,30 @@ textarea {
 
 
 /* --- Find & Replace Modernized Styles --- */
-.fr-options-group { /* For Regex, Case Sensitive, Whole Word checkboxes */
+.fr-options-group { 
   display: flex;
-  justify-content: space-around; /* Or space-between / flex-start */
+  justify-content: space-around; 
   align-items: center;
-  flex-wrap: wrap; /* Allow wrapping on smaller screens */
-  gap: 10px; /* Space between checkbox groups */
+  flex-wrap: wrap; 
+  gap: 10px; 
   margin-top: 10px;
   margin-bottom: 15px;
 }
 .fr-options-group .checkbox-label-wrapper {
-  margin-bottom: 0; /* Remove default margin if any from generic checkbox wrapper */
-  padding: 5px; /* Add some padding around each for better touch */
+  margin-bottom: 0; 
+  padding: 5px; 
 }
 
 .fr-action-buttons-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
   gap: 10px;
   margin-bottom: 15px;
 }
-.fr-action-buttons-grid .btn.fr-btn { /* Ensure buttons in grid take up available space */
+.fr-action-buttons-grid .btn.fr-btn { 
   width: 100%;
-  max-width: none; /* Override general .btn max-width */
-  margin: 0; /* Override general .btn margin */
+  max-width: none; 
+  margin: 0; 
 }
 
 
@@ -657,7 +695,7 @@ textarea {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 5px;
-  flex-wrap: wrap; /* Allow context and count to wrap */
+  flex-wrap: wrap; 
 }
 .fr-match-info .match-info-label {
   font-weight: 500;
@@ -667,23 +705,23 @@ textarea {
 .fr-match-info .match-count-display {
   font-style: italic;
   text-align: right;
-  flex-grow: 1; /* Push to the right if space allows */
+  flex-grow: 1; 
 }
 
 
-.fr-match-preview { /* Was #currentMatchDisplay */
+.fr-match-preview { 
   background: var(--input-background);
   padding: 12px;
   border-radius: 8px;
-  min-height: 60px; /* Increased min-height */
-  white-space: pre-wrap; /* Preserve whitespace and newlines */
-  word-wrap: break-word; /* Break long words */
+  min-height: 60px; 
+  white-space: pre-wrap; 
+  word-wrap: break-word; 
   color: var(--primary-text-color);
-  font-family: 'Consolas', 'Monaco', monospace; /* Monospace for better alignment of text */
+  font-family: 'Consolas', 'Monaco', monospace; 
   font-size: 0.95em;
   line-height: 1.5;
-  border: 1px solid #383838; /* Subtle border */
-  max-height: 150px; /* Limit height and make scrollable if needed */
+  border: 1px solid #383838; 
+  max-height: 150px; 
   overflow-y: auto;
 }
 
@@ -701,11 +739,11 @@ textarea {
   max-height: 200px;
   overflow-y: auto;
   background: var(--input-background);
-  border: 1px solid #444; /* Subtle border */
+  border: 1px solid #444; 
   border-radius: 8px;
   padding: 10px;
   list-style-type: none;
-  margin: 10px 0 20px 0; /* Spacing */
+  margin: 10px 0 20px 0; 
   text-align: left;
 }
 
@@ -726,26 +764,116 @@ textarea {
 }
 
 .chapter-selection-list input[type="checkbox"] {
-  /* Inherits from .checkbox-label-wrapper input[type="checkbox"] due to HTML structure */
   margin-right: 12px; 
-  flex-shrink: 0; /* Prevent checkbox from shrinking */
+  flex-shrink: 0; 
 }
-.chapter-selection-list label { /* For the text part of the list item */
-  color: inherit; /* Inherit color from li */
+.chapter-selection-list label { 
+  color: inherit; 
   font-size: 14px;
-  flex-grow: 1; /* Allow text to take remaining space */
+  flex-grow: 1; 
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 
-/* Chapter Selection Action Buttons Container */
-/* Targets the div holding "Select All" / "Deselect All" */
-#splitterChapterSelectionArea > div[style*="display: flex"],
-#epubToZipChapterSelectionArea > div[style*="display: flex"] {
-  /* Styles for larger screens are inline in HTML (flex, gap, justify-content) */
-  /* These will be overridden by media query below for smaller screens */
+/* Draggable Chapter List Styles */
+.chapter-list-draggable {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 20px 0;
+    border: 1px solid #444;
+    border-radius: 8px;
+    background: var(--input-background);
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.chapter-list-draggable li {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid #383838;
+    cursor: grab;
+    user-select: none;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+
+.chapter-list-draggable li:last-child {
+    border-bottom: none;
+}
+
+.chapter-list-draggable li.dragging {
+    opacity: 0.5;
+    background: var(--accent-color);
+}
+
+.chapter-list-draggable li:active {
+    cursor: grabbing;
+}
+
+.drag-handle {
+    margin-right: 10px;
+    color: var(--secondary-text-color);
+    font-size: 1.2em;
+    line-height: 1;
+}
+
+.chapter-title-input {
+    flex-grow: 1;
+    background: transparent;
+    border: none;
+    color: var(--primary-text-color);
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    font-size: 14px;
+}
+.chapter-title-input:focus {
+    background: rgba(0,0,0,0.2);
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+/* Accordion Styles */
+.advanced-options-accordion {
+    margin-top: 15px;
+    border: 1px solid #444;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.1);
+}
+
+.advanced-options-accordion summary {
+    padding: 12px;
+    cursor: pointer;
+    outline: none;
+    font-weight: 500;
+    color: #ffffffcc;
+    list-style-position: inside;
+    transition: background-color 0.2s;
+}
+.advanced-options-accordion summary:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.advanced-options-accordion summary:focus-visible {
+    box-shadow: 0 0 0 2px var(--focus-outline-color);
+    border-radius: 7px;
+}
+
+.advanced-options-accordion[open] > summary {
+    border-bottom: 1px solid #444;
+}
+
+.advanced-options-accordion .accordion-content {
+    padding: 15px;
+    border-top: none;
+}
+.advanced-options-accordion .accordion-content .option-group {
+    margin-bottom: 10px;
+}
+.advanced-options-accordion .accordion-content .option-group:last-child {
+    margin-bottom: 0;
 }
 
 
@@ -759,9 +887,10 @@ textarea {
   .card {
     padding: 20px;
   }
-  .tool-section {
-    padding: 20px; 
-  }
+  /* .tool-section padding is now handled by .card if tool-section is inside card, or directly if needed */
+  /* If .tool-section is a direct child of .container, it might need its own padding.
+     Currently, they are all within .card. */
+
   .btn {
     padding: 12px 20px;
     font-size: 15px;
@@ -779,47 +908,38 @@ textarea {
     font-size: 13px;
   }
   .tooltip-text-popup {
-    width: 180px; /* Adjust for smaller screens */
+    width: 180px; 
     margin-left: -90px;
     font-size: 12px;
   }
-  /* Stack button pairs in Find & Replace tool on mobile for better usability - old rule, new grid might handle this */
-  /* #findReplaceBackupApp div[style*="display:flex"][style*="gap:10px"] {
-    flex-direction: column;
-    gap: 0; 
-  }
-  #findReplaceBackupApp div[style*="display:flex"][style*="gap:10px"] .btn {
-      margin-top: 5px;
-      margin-bottom: 5px;
-  } */
+
   .fr-action-buttons-grid {
-    grid-template-columns: 1fr; /* Stack buttons on smaller screens */
+    grid-template-columns: 1fr; 
   }
   .fr-options-group {
-    flex-direction: column; /* Stack checkboxes */
+    flex-direction: column; 
     align-items: flex-start;
   }
   .fr-options-group .checkbox-label-wrapper {
-     justify-content: flex-start; /* Align checkbox text to left */
+     justify-content: flex-start; 
      width: 100%;
   }
 
 }
 
-/* Specific adjustments for very small screens, e.g., stacking select all/deselect all */
 @media (max-width: 480px) {
   #splitterChapterSelectionArea > div[style*="display: flex"],
   #epubToZipChapterSelectionArea > div[style*="display: flex"] {
     flex-direction: column;
-    align-items: stretch; /* Make buttons take full width of container */
-    gap: 8px; /* Adjust gap for vertical stacking */
+    align-items: stretch; 
+    gap: 8px; 
   }
 
   #splitterChapterSelectionArea > div[style*="display: flex"] .btn-small,
   #epubToZipChapterSelectionArea > div[style*="display: flex"] .btn-small {
-    max-width: 100%; /* Override max-width for btn-small to allow full stretch */
-    margin-right: 0; /* Remove right margin when stacked */
-    margin-left: auto; /* Center if they don't fully stretch due to padding/content */
+    max-width: 100%; 
+    margin-right: 0; 
+    margin-left: auto; 
     margin-right: auto;
   }
 
@@ -830,5 +950,15 @@ textarea {
   .fr-match-info .match-count-display {
     text-align: left;
     margin-top: 5px;
+  }
+  .option-group > label:not(.checkbox-label-wrapper) {
+      font-size: 13px; /* Slightly smaller labels on very small screens */
+  }
+  .option-group input[type="text"],
+  .option-group input[type="number"],
+  .option-group select,
+  .option-group textarea {
+      font-size: 13px; /* Slightly smaller input text on very small screens */
+      padding: 10px;
   }
 }
