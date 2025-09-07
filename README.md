@@ -149,7 +149,7 @@ Navigate to the root directory of the Novelist Tools project in your terminal an
 # First, ensure your web assets (index.html, index.js, index.css, jszip.min.js, icons/) are in the root.
 # If you have a build step that outputs to a 'dist' folder, use --web-dir=dist.
 # For this project, if running from the root without a separate build output folder:
-npx cap init "Novelist Tools" "com.novelisttools.app" --web-dir=.
+npx cap init "Novelist Tools" "com.novelisttools.app" --web-dir=dist
 ```
 
 *   **App Name:** "Novelist Tools" (or your preferred name)
@@ -241,6 +241,12 @@ After making any changes to your web code or installing/updating plugins, you ne
 npx cap sync android
 ```
 This command copies your web assets from your configured `webDir` to the Android platform directory and updates plugin configurations.
+
+```bash
+cd android && gradlew --no-daemon assembleDebug
+```
+
+
 
 ### 10. Open Android Project in Android Studio
 

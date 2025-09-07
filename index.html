@@ -22,6 +22,12 @@
   <!-- Link to external CSS file -->
   <link rel="stylesheet" href="index.css">
 
+  <!--
+    JSZip: For Capacitor apps and PWA offline support, this library is crucial.
+    It should be served locally and loaded before the main app script.
+  -->
+  <script src="jszip.min.js"></script>
+
 <script type="importmap">
 {
   "imports": {
@@ -537,12 +543,6 @@
   </main>
 
   <div id="toast" class="status-toast" role="alert" aria-live="assertive"></div>
-
-  <!--
-    JSZip: For Capacitor apps and PWA offline support, this library is crucial.
-    It should be served locally.
-  -->
-  <script src="jszip.min.js"></script> <!-- Ensure jszip.min.js is in the root or update path -->
 
   <script type="module" src="index.js"></script> <!-- Changed from index.tsx to index.js -->
 <script type="module" src="/index.tsx"></script>

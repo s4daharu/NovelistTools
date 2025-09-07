@@ -1456,26 +1456,6 @@ async function saveBlobNative(blob, filename, mimeType, showToastFunction) {
     return false;
   }
 }
-async function triggerDownload(blob, filename, mimeType, showAppToast) {
-  const nativeSaveSucceeded = await saveBlobNative(blob, filename, mimeType, showAppToast);
-  if (!nativeSaveSucceeded) {
-    console.log(`triggerDownload: Native save failed or not native platform. Falling back to web download for "${filename}".`);
-    try {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showAppToast(`Download started: ${filename}`, false);
-    } catch (webDownloadError) {
-      console.error("triggerDownload: Web download fallback error:", webDownloadError);
-      showAppToast(`Error during web download: ${webDownloadError.message || "Unknown error"}`, true);
-    }
-  }
-}
 
 // ts/epub-splitter.ts
 function readFileAsArrayBuffer(file) {
@@ -1587,7 +1567,7 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
       toggleAppSpinner(true);
       try {
         const buffer = await readFileAsArrayBuffer(selectedFile);
-        const epub = await JSZip.loadAsync(buffer);
+        const epub = await window.JSZip.loadAsync(buffer);
         const tempChapters = [];
         const structure = {};
         const promises = [];
@@ -1758,7 +1738,7 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
         return;
       }
       const effectiveStart = startNumber;
-      const zip = new JSZip();
+      const zip = new window.JSZip();
       if (mode === "single") {
         usableChaps.forEach((text, i) => {
           const chapNum = String(effectiveStart + i).padStart(2, "0");
@@ -1781,20 +1761,17 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
         }
       }
       const { blob, count } = await zip.generateAsync({ type: "blob" }).then((blob2) => ({ blob: blob2, count: usableChaps.length }));
-      if (downloadLink) {
-        const downloadFilename = `${pattern}_chapters.zip`;
-        const nativeSaveSucceeded = await saveBlobNative(blob, downloadFilename, "application/zip", showAppToast);
-        if (!nativeSaveSucceeded) {
-          downloadLink.href = URL.createObjectURL(blob);
-          downloadLink.download = downloadFilename;
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
+      const downloadFilename = `${pattern}_chapters.zip`;
+      const nativeSaveSucceeded = await saveBlobNative(blob, downloadFilename, "application/zip", showAppToast);
+      if (!nativeSaveSucceeded && downloadLink) {
+        if (downloadLink.href && downloadLink.href.startsWith("blob:")) {
           URL.revokeObjectURL(downloadLink.href);
         }
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = downloadFilename;
       }
       downloadSec.style.display = "block";
-      statusEl.textContent = `Extracted ${count} chapter(s) from your selection. Download started.`;
+      statusEl.textContent = `Extracted ${count} chapter(s) from your selection. Your file is ready.`;
       statusEl.className = "status success";
       statusEl.style.display = "block";
       showAppToast(`Extracted ${count} chapter(s).`);
@@ -2014,7 +1991,7 @@ function initializeZipToEpub(showAppToast, toggleAppSpinner) {
       createBtn.disabled = true;
       toggleAppSpinner(true);
       try {
-        const contentZip = await JSZip.loadAsync(selectedZipFile);
+        const contentZip = await window.JSZip.loadAsync(selectedZipFile);
         const chapterPromises = [];
         contentZip.forEach((relativePath, zipEntry) => {
           if (!zipEntry.dir && zipEntry.name.toLowerCase().endsWith(".txt")) {
@@ -2103,7 +2080,7 @@ function initializeZipToEpub(showAppToast, toggleAppSpinner) {
     toggleAppSpinner(true);
     if (downloadSec) downloadSec.style.display = "none";
     try {
-      const epubZip = new JSZip();
+      const epubZip = new window.JSZip();
       epubZip.file("mimetype", "application/epub+zip", { compression: "STORE" });
       const containerXML = `<?xml version="1.0" encoding="UTF-8"?>
 <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
@@ -2234,21 +2211,18 @@ p { text-indent: 1.5em; margin-top: 0; margin-bottom: 0.5em; text-align: justify
         mimeType: "application/epub+zip",
         compression: "DEFLATE"
       });
-      if (downloadLink) {
-        const safeFileName = title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "generated_epub";
-        const downloadFilename = `${safeFileName}.epub`;
-        const nativeSaveSucceeded = await saveBlobNative(epubBlob, downloadFilename, "application/epub+zip", showAppToast);
-        if (!nativeSaveSucceeded) {
-          downloadLink.href = URL.createObjectURL(epubBlob);
-          downloadLink.download = downloadFilename;
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
+      const safeFileName = title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "generated_epub";
+      const downloadFilename = `${safeFileName}.epub`;
+      const nativeSaveSucceeded = await saveBlobNative(epubBlob, downloadFilename, "application/epub+zip", showAppToast);
+      if (!nativeSaveSucceeded && downloadLink) {
+        if (downloadLink.href && downloadLink.href.startsWith("blob:")) {
           URL.revokeObjectURL(downloadLink.href);
         }
+        downloadLink.href = URL.createObjectURL(epubBlob);
+        downloadLink.download = downloadFilename;
       }
       if (downloadSec) downloadSec.style.display = "block";
-      statusEl.textContent = `EPUB "${title}" created successfully with ${chapters.length} chapter(s). Download started.`;
+      statusEl.textContent = `EPUB "${title}" created successfully with ${chapters.length} chapter(s). Your file is ready.`;
       statusEl.className = "status success";
       statusEl.style.display = "block";
       showAppToast("EPUB created successfully!");
@@ -2371,19 +2345,6 @@ function sanitizeFilenameForZip(name) {
   sanitized = sanitized.replace(/^[_.-]+|[_.-]+$/g, "");
   sanitized = sanitized.substring(0, 100);
   return sanitized || "file";
-}
-async function triggerDownload2(blob, filename, mimeType, showAppToast) {
-  const nativeSaveSucceeded = await saveBlobNative(blob, filename, mimeType, showAppToast);
-  if (!nativeSaveSucceeded) {
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  }
 }
 function delay(ms) {
   return new Promise((resolve2) => setTimeout(resolve2, ms));
@@ -2588,6 +2549,13 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
       labelWrapper.appendChild(checkbox);
       labelWrapper.appendChild(label);
       li.appendChild(labelWrapper);
+      li.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target.tagName !== "INPUT") {
+          checkbox.checked = !checkbox.checked;
+        }
+      });
+      chapterListUl.appendChild(li);
     });
     chapterSelectionArea.style.display = "block";
   }
@@ -2644,7 +2612,7 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
     try {
       const arrayBuffer = await readFileAsArrayBuffer2(file);
       updateLocalStatus("Unzipping EPUB...");
-      currentZipInstance = await JSZip.loadAsync(arrayBuffer);
+      currentZipInstance = await window.JSZip.loadAsync(arrayBuffer);
       updateLocalStatus("Parsing Table of Contents...");
       const chapters = await getChapterListFromEpub(currentZipInstance, updateLocalStatus);
       if (chapters.length > 0) {
@@ -2707,7 +2675,7 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
     extractBtn.disabled = true;
     extractBtn.textContent = "Extracting...";
     toggleAppSpinner(true);
-    const outputZip = new JSZip();
+    const outputZip = new window.JSZip();
     let filesAdded = 0;
     const totalChaptersToProcess = selectedChapters.length;
     try {
@@ -2754,14 +2722,13 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
         const zipBlob = await outputZip.generateAsync({ type: "blob", compression: "DEFLATE" });
         const downloadFilenameBase = currentEpubFilename.replace(/\.epub$/i, "") || "epub_content";
         const finalFilename = `${sanitizeFilenameForZip(downloadFilenameBase)}_chapters.zip`;
-        await triggerDownload2(zipBlob, finalFilename, "application/zip", showAppToast);
-        updateLocalStatus(`Download started / File saved (${filesAdded}/${totalChaptersToProcess} chapters).`);
-        if (downloadSec && downloadLink) {
-          downloadLink.href = "#";
-          downloadLink.setAttribute("download", finalFilename);
-          downloadLink.textContent = `Download ${finalFilename}`;
-          downloadSec.style.display = "block";
+        const nativeSaveSucceeded = await saveBlobNative(zipBlob, finalFilename, "application/zip", showAppToast);
+        if (!nativeSaveSucceeded && downloadLink) {
+          downloadLink.href = URL.createObjectURL(zipBlob);
+          downloadLink.download = finalFilename;
         }
+        updateLocalStatus(`Extraction complete. ${filesAdded}/${totalChaptersToProcess} chapters exported.`, false);
+        if (downloadSec) downloadSec.style.display = "block";
       } else {
         updateLocalStatus("Extraction complete, but no chapter content was retrieved or all content was removed. Check EPUB and options.", true);
       }
@@ -2875,7 +2842,7 @@ function initializeCreateBackupFromZip(showAppToast, toggleAppSpinner) {
     const uniqueCodeProvided = uniqueCodeInput.value.trim();
     const chapterPatternValue = chapterPatternInput.value.trim();
     try {
-      const zip = await JSZip.loadAsync(file);
+      const zip = await window.JSZip.loadAsync(file);
       const scenes = [];
       const sections = [];
       let currentProcessingIndex = 0;
@@ -3011,7 +2978,18 @@ function initializeCreateBackupFromZip(showAppToast, toggleAppSpinner) {
       const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: "application/json" });
       const safeFileNameBase = projectTitle.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_");
       const filename = `${safeFileNameBase || "backup_from_zip"}.json`;
-      await triggerDownload(blob, filename, "application/json", showAppToast);
+      const nativeSaveSucceeded = await saveBlobNative(blob, filename, "application/json", showAppToast);
+      if (!nativeSaveSucceeded) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
       if (statusMessageEl) {
         statusMessageEl.textContent = `Backup file created with ${scenes.length} chapter(s). Download started.`;
         statusMessageEl.className = "status success";
@@ -3135,7 +3113,18 @@ function initializeCreateNewBackup(showAppToast, toggleAppSpinner) {
       const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
       const filenameBase = title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "new_backup";
       const filename = `${filenameBase}.json`;
-      await triggerDownload(blob, filename, "application/json", showAppToast);
+      const nativeSaveSucceeded = await saveBlobNative(blob, filename, "application/json", showAppToast);
+      if (!nativeSaveSucceeded) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
       statusEl.textContent = "Backup file created successfully. Download started.";
       statusEl.className = "status success";
       statusEl.style.display = "block";
@@ -3279,7 +3268,18 @@ function initializeExtendBackup(showAppToast, toggleAppSpinner) {
         const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
         const filenameBase = backup.title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "extended_backup";
         const filename = `${filenameBase}.json`;
-        await triggerDownload(blob, filename, "application/json", showAppToast);
+        const nativeSaveSucceeded = await saveBlobNative(blob, filename, "application/json", showAppToast);
+        if (!nativeSaveSucceeded) {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = filename;
+          a.style.display = "none";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
         statusEl.textContent = `Backup extended with ${extraChapters} chapter(s). Download started.`;
         statusEl.className = "status success";
         statusEl.style.display = "block";
@@ -3489,7 +3489,18 @@ function initializeMergeBackup(showAppToast, toggleAppSpinner) {
         const blob = new Blob([JSON.stringify(mergedData, null, 2)], { type: "application/json" });
         const filenameBase = mergedTitle.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "merged_backup";
         const filename = `${filenameBase}.json`;
-        await triggerDownload(blob, filename, "application/json", showAppToast);
+        const nativeSaveSucceeded = await saveBlobNative(blob, filename, "application/json", showAppToast);
+        if (!nativeSaveSucceeded) {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = filename;
+          a.style.display = "none";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
         statusEl.textContent = `Backup files merged into "${mergedTitle}". Download started.`;
         statusEl.className = "status success";
         statusEl.style.display = "block";
@@ -3607,7 +3618,7 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
         throw new Error("Base backup file has an invalid or incomplete structure.");
       }
       const currentRevision = backupData.revisions[0];
-      const zip = await JSZip.loadAsync(selectedZipFile);
+      const zip = await window.JSZip.loadAsync(selectedZipFile);
       const chapterFilePromises = [];
       zip.forEach((relativePath, zipEntry) => {
         if (!zipEntry.dir && zipEntry.name.toLowerCase().endsWith(".txt")) {
@@ -3732,7 +3743,18 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
       const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: "application/json" });
       const safeFileNameBase = backupData.title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_");
       const filename = `${safeFileNameBase || "augmented_backup"}.json`;
-      await triggerDownload(blob, filename, "application/json", showAppToast);
+      const nativeSaveSucceeded = await saveBlobNative(blob, filename, "application/json", showAppToast);
+      if (!nativeSaveSucceeded) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
       statusEl.textContent = `Backup augmented with ${chapterFiles.length} chapter(s) from ZIP. Download started.`;
       statusEl.className = "status success";
       statusEl.style.display = "block";
@@ -4158,7 +4180,18 @@ function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
       if (rev) rev.date = now;
       const blob = new Blob([JSON.stringify(frData, null, 2)], { type: "application/json" });
       const filename = `${frData.title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "replaced_backup"}.json`;
-      await triggerDownload(blob, filename, "application/json", showAppToast);
+      const nativeSaveSucceeded = await saveBlobNative(blob, filename, "application/json", showAppToast);
+      if (!nativeSaveSucceeded) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
       showAppToast(`Replace All complete. ${totalReplacementsMade} replacement(s) made. Download started.`);
       resetFrState(false);
     } catch (err) {
@@ -4185,7 +4218,18 @@ function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
       }
       const blob = new Blob([JSON.stringify(frData, null, 2)], { type: "application/json" });
       const filename = `${frData.title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "current_backup"}_current.json`;
-      await triggerDownload(blob, filename, "application/json", showAppToast);
+      const nativeSaveSucceeded = await saveBlobNative(blob, filename, "application/json", showAppToast);
+      if (!nativeSaveSucceeded) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
       showAppToast(`Current backup download started: ${filename}`);
       if (statusEl) {
         statusEl.textContent = `Current backup download started: ${filename}`;
@@ -4366,7 +4410,21 @@ function initializeApp() {
 
 // index.tsx
 document.addEventListener("DOMContentLoaded", () => {
-  initializeApp();
+  const checkInterval = 100;
+  let checkCount = 0;
+  const maxChecks = 50;
+  const checkJSZipAndInit = () => {
+    if (window.JSZip) {
+      console.log("JSZip library is loaded. Initializing the application.");
+      initializeApp();
+    } else if (checkCount < maxChecks) {
+      checkCount++;
+      setTimeout(checkJSZipAndInit, checkInterval);
+    } else {
+      console.error("Fatal: Could not load the JSZip library. The application cannot start.");
+    }
+  };
+  checkJSZipAndInit();
 });
 /**
  * @license
