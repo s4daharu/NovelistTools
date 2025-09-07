@@ -1217,8 +1217,85 @@ var init_web3 = __esm({
 });
 
 // ts/ui-helpers.ts
+init_dist();
+
+// node_modules/@capacitor/haptics/dist/esm/index.js
+init_dist();
+init_definitions();
+var Haptics = registerPlugin("Haptics", {
+  web: () => Promise.resolve().then(() => (init_web(), web_exports)).then((m) => new m.HapticsWeb())
+});
+
+// ts/ui-helpers.ts
 var toastEl = document.getElementById("toast");
-var backButton = document.getElementById("backButton");
+var sidebarEl = document.getElementById("sidebar");
+var touchStartX = 0;
+var touchStartY = 0;
+var touchEndX = 0;
+var touchEndY = 0;
+var isSwipeInitiatedFromEdge = false;
+var isPotentiallySwipingSidebar = false;
+var SWIPE_THRESHOLD = 60;
+var SWIPE_EDGE_THRESHOLD = 60;
+var SIDEBAR_SWIPE_CLOSE_THRESHOLD = 80;
+var MAX_VERTICAL_SWIPE = 80;
+function toggleMenu() {
+  sidebarEl?.classList.toggle("open");
+}
+function handleTouchStart(event) {
+  const touch = event.touches[0];
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+  isSwipeInitiatedFromEdge = false;
+  isPotentiallySwipingSidebar = false;
+  if (!sidebarEl) return;
+  if (!sidebarEl.classList.contains("open") && touchStartX > window.innerWidth - SWIPE_EDGE_THRESHOLD) {
+    isSwipeInitiatedFromEdge = true;
+    isPotentiallySwipingSidebar = true;
+  } else if (sidebarEl.classList.contains("open") && touchStartX < sidebarEl.offsetWidth + SIDEBAR_SWIPE_CLOSE_THRESHOLD) {
+    isSwipeInitiatedFromEdge = true;
+    isPotentiallySwipingSidebar = true;
+  }
+}
+function handleTouchMove(event) {
+  if (!isPotentiallySwipingSidebar || event.touches.length === 0) return;
+  const touch = event.touches[0];
+  touchEndX = touch.clientX;
+  touchEndY = touch.clientY;
+  const deltaX = touchEndX - touchStartX;
+  const deltaY = touchEndY - touchStartY;
+  if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10 && isSwipeInitiatedFromEdge) {
+    event.preventDefault();
+  }
+}
+function handleTouchEnd() {
+  if (!isSwipeInitiatedFromEdge || !isPotentiallySwipingSidebar || !sidebarEl) {
+    isSwipeInitiatedFromEdge = false;
+    isPotentiallySwipingSidebar = false;
+    return;
+  }
+  const deltaX = touchEndX - touchStartX;
+  const deltaY = touchEndY - touchStartY;
+  let menuToggled = false;
+  if (Math.abs(deltaY) < MAX_VERTICAL_SWIPE) {
+    if (!sidebarEl.classList.contains("open") && deltaX < -SWIPE_THRESHOLD && touchStartX > window.innerWidth - SWIPE_EDGE_THRESHOLD) {
+      toggleMenu();
+      menuToggled = true;
+    } else if (sidebarEl.classList.contains("open") && deltaX > SWIPE_THRESHOLD && touchStartX < sidebarEl.offsetWidth + SIDEBAR_SWIPE_CLOSE_THRESHOLD) {
+      toggleMenu();
+      menuToggled = true;
+    }
+  }
+  if (menuToggled && Capacitor.isNativePlatform()) {
+    Haptics.impact({ style: ImpactStyle.Light });
+  }
+  isSwipeInitiatedFromEdge = false;
+  isPotentiallySwipingSidebar = false;
+  touchStartX = 0;
+  touchStartY = 0;
+  touchEndX = 0;
+  touchEndY = 0;
+}
 function showToast(msg, isError = false) {
   if (!toastEl) {
     console.error("Toast element not found");
@@ -1227,10 +1304,8 @@ function showToast(msg, isError = false) {
   toastEl.textContent = msg;
   toastEl.className = "status-toast " + (isError ? "toast-error" : "toast-success");
   toastEl.style.opacity = "1";
-  toastEl.style.transform = "translateX(-50%) translateY(0)";
   setTimeout(() => {
     toastEl.style.opacity = "0";
-    toastEl.style.transform = "translateX(-50%) translateY(20px)";
   }, 3e3);
 }
 function toggleSpinner(spinnerElement, show) {
@@ -1242,9 +1317,9 @@ function toggleSpinner(spinnerElement, show) {
 function displayTool(appId, currentToolSectionsMap) {
   const dashboardAppEl = document.getElementById("dashboardApp");
   const appTitleEl = document.getElementById("appTitle");
+  if (dashboardAppEl) dashboardAppEl.style.display = "none";
   let currentTitle = "Novelist Tools";
   let toolDisplayed = false;
-  if (dashboardAppEl) dashboardAppEl.style.display = "none";
   for (const id in currentToolSectionsMap) {
     const toolInfo = currentToolSectionsMap[id];
     const appElement = document.getElementById(toolInfo.elementId);
@@ -1259,22 +1334,24 @@ function displayTool(appId, currentToolSectionsMap) {
     }
   }
   if (appTitleEl) appTitleEl.textContent = currentTitle;
-  document.body.classList.add("tool-active");
-  if (backButton) backButton.style.display = "block";
+  if (sidebarEl && sidebarEl.classList.contains("open")) {
+    toggleMenu();
+  }
   return toolDisplayed;
 }
 function showDashboard(fromPopStateUpdate = false, currentToolSectionsMap) {
   const dashboardAppEl = document.getElementById("dashboardApp");
   const appTitleEl = document.getElementById("appTitle");
+  if (dashboardAppEl) dashboardAppEl.style.display = "block";
   for (const id in currentToolSectionsMap) {
     const toolInfo = currentToolSectionsMap[id];
     const appElement = document.getElementById(toolInfo.elementId);
     if (appElement) appElement.style.display = "none";
   }
-  if (dashboardAppEl) dashboardAppEl.style.display = "block";
   if (appTitleEl) appTitleEl.textContent = "Novelist Tools";
-  document.body.classList.remove("tool-active");
-  if (backButton) backButton.style.display = "none";
+  if (sidebarEl && sidebarEl.classList.contains("open")) {
+    toggleMenu();
+  }
   const targetHash = "#dashboard";
   if (!fromPopStateUpdate && window.location.hash !== targetHash) {
     const historyUrl = window.location.protocol === "blob:" ? null : targetHash;
@@ -1317,13 +1394,6 @@ function launchAppFromCard(appId, fromPopStateUpdate = false, currentToolSection
 
 // ts/epub-splitter.ts
 init_dist();
-
-// node_modules/@capacitor/haptics/dist/esm/index.js
-init_dist();
-init_definitions();
-var Haptics = registerPlugin("Haptics", {
-  web: () => Promise.resolve().then(() => (init_web(), web_exports)).then((m) => new m.HapticsWeb())
-});
 
 // ts/capacitor-helpers.ts
 init_dist();
@@ -1456,6 +1526,26 @@ async function saveBlobNative(blob, filename, mimeType, showToastFunction) {
     return false;
   }
 }
+async function triggerDownload(blob, filename, mimeType, showAppToast) {
+  const nativeSaveSucceeded = await saveBlobNative(blob, filename, mimeType, showAppToast);
+  if (!nativeSaveSucceeded) {
+    console.log(`triggerDownload: Native save failed or not native platform. Falling back to web download for "${filename}".`);
+    try {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showAppToast(`Download started: ${filename}`, false);
+    } catch (webDownloadError) {
+      console.error("triggerDownload: Web download fallback error:", webDownloadError);
+      showAppToast(`Error during web download: ${webDownloadError.message || "Unknown error"}`, true);
+    }
+  }
+}
 
 // ts/epub-splitter.ts
 function readFileAsArrayBuffer(file) {
@@ -1469,7 +1559,6 @@ function readFileAsArrayBuffer(file) {
 function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
   const uploadInput = document.getElementById("epubUpload");
   const fileNameEl = document.getElementById("epubFileName");
-  const fileNameWrapper = document.getElementById("epubFileNameWrapper");
   const clearFileBtn = document.getElementById("clearEpubUpload");
   const splitBtn = document.getElementById("splitBtn");
   const modeSelect = document.getElementById("modeSelect");
@@ -1489,7 +1578,7 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
   const deselectAllChaptersBtn = document.getElementById("splitterDeselectAllChapters");
   let selectedFile = null;
   let parsedChaptersForSelection = [];
-  if (!uploadInput || !splitBtn || !modeSelect || !fileNameEl || !clearFileBtn || !groupSizeGrp || !fileNameWrapper || !statusEl || !downloadSec || !downloadLink || !tooltipTrigger || !chapterPatternEl || !startNumberEl || !offsetNumberEl || !groupSizeEl || !chapterSelectionArea || !chapterListUl || !selectAllChaptersBtn || !deselectAllChaptersBtn) {
+  if (!uploadInput || !splitBtn || !modeSelect || !fileNameEl || !clearFileBtn || !groupSizeGrp || !statusEl || !downloadSec || !downloadLink || !tooltipTrigger || !chapterPatternEl || !startNumberEl || !offsetNumberEl || !groupSizeEl || !chapterSelectionArea || !chapterListUl || !selectAllChaptersBtn || !deselectAllChaptersBtn) {
     console.error("EPUB Splitter UI elements not found. Initialization failed.");
     return;
   }
@@ -1531,16 +1620,10 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
       const label = document.createElement("label");
       label.htmlFor = checkbox.id;
       label.textContent = chapInfo.title;
-      const labelWrapper = document.createElement("div");
-      labelWrapper.className = "checkbox-label-wrapper";
-      labelWrapper.style.padding = "0";
-      labelWrapper.style.cursor = "pointer";
-      labelWrapper.appendChild(checkbox);
-      labelWrapper.appendChild(label);
-      li.appendChild(labelWrapper);
+      li.appendChild(checkbox);
+      li.appendChild(label);
       li.addEventListener("click", (e) => {
-        const target = e.target;
-        if (target.tagName !== "INPUT") {
+        if (e.target !== checkbox) {
           checkbox.checked = !checkbox.checked;
         }
       });
@@ -1561,13 +1644,13 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
     statusEl.style.display = "none";
     downloadSec.style.display = "none";
     if (selectedFile) {
-      fileNameEl.textContent = selectedFile.name;
-      fileNameWrapper.style.display = "flex";
+      fileNameEl.textContent = `Selected: ${selectedFile.name}`;
+      if (clearFileBtn) clearFileBtn.style.display = "inline-block";
       splitBtn.disabled = true;
       toggleAppSpinner(true);
       try {
         const buffer = await readFileAsArrayBuffer(selectedFile);
-        const epub = await window.JSZip.loadAsync(buffer);
+        const epub = await JSZip.loadAsync(buffer);
         const tempChapters = [];
         const structure = {};
         const promises = [];
@@ -1641,7 +1724,7 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
       }
     } else {
       fileNameEl.textContent = "";
-      fileNameWrapper.style.display = "none";
+      if (clearFileBtn) clearFileBtn.style.display = "none";
       splitBtn.disabled = true;
     }
   });
@@ -1649,7 +1732,7 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
     selectedFile = null;
     uploadInput.value = "";
     fileNameEl.textContent = "";
-    fileNameWrapper.style.display = "none";
+    clearFileBtn.style.display = "none";
     splitBtn.disabled = true;
     statusEl.style.display = "none";
     downloadSec.style.display = "none";
@@ -1738,7 +1821,7 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
         return;
       }
       const effectiveStart = startNumber;
-      const zip = new window.JSZip();
+      const zip = new JSZip();
       if (mode === "single") {
         usableChaps.forEach((text, i) => {
           const chapNum = String(effectiveStart + i).padStart(2, "0");
@@ -1761,17 +1844,20 @@ function initializeEpubSplitter(showAppToast, toggleAppSpinner) {
         }
       }
       const { blob, count } = await zip.generateAsync({ type: "blob" }).then((blob2) => ({ blob: blob2, count: usableChaps.length }));
-      const downloadFilename = `${pattern}_chapters.zip`;
-      const nativeSaveSucceeded = await saveBlobNative(blob, downloadFilename, "application/zip", showAppToast);
-      if (!nativeSaveSucceeded && downloadLink) {
-        if (downloadLink.href && downloadLink.href.startsWith("blob:")) {
+      if (downloadLink) {
+        const downloadFilename = `${pattern}_chapters.zip`;
+        const nativeSaveSucceeded = await saveBlobNative(blob, downloadFilename, "application/zip", showAppToast);
+        if (!nativeSaveSucceeded) {
+          downloadLink.href = URL.createObjectURL(blob);
+          downloadLink.download = downloadFilename;
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
           URL.revokeObjectURL(downloadLink.href);
         }
-        downloadLink.href = URL.createObjectURL(blob);
-        downloadLink.download = downloadFilename;
       }
       downloadSec.style.display = "block";
-      statusEl.textContent = `Extracted ${count} chapter(s) from your selection. Your file is ready.`;
+      statusEl.textContent = `Extracted ${count} chapter(s) from your selection. Download started.`;
       statusEl.className = "status success";
       statusEl.style.display = "block";
       showAppToast(`Extracted ${count} chapter(s).`);
@@ -1872,14 +1958,12 @@ ${bodyContent}${chapterBody}  </section>
 function initializeZipToEpub(showAppToast, toggleAppSpinner) {
   const zipUploadInput = document.getElementById("zipUploadForEpub");
   const zipFileNameEl = document.getElementById("zipFileNameForEpub");
-  const zipFileNameWrapper = document.getElementById("zipFileNameForEpubWrapper");
   const clearZipBtn = document.getElementById("clearZipUploadForEpub");
   const epubTitleInput = document.getElementById("epubTitle");
   const epubAuthorInput = document.getElementById("epubAuthor");
   const epubLangInput = document.getElementById("epubLanguage");
   const epubCoverImageInput = document.getElementById("epubCoverImage");
   const epubCoverFileNameEl = document.getElementById("epubCoverFileName");
-  const epubCoverFileNameWrapper = document.getElementById("epubCoverFileNameWrapper");
   const clearCoverBtn = document.getElementById("clearEpubCoverImage");
   const processMarkdownCheckbox = document.getElementById("processMarkdown");
   const chapterArea = document.getElementById("zipToEpubChapterArea");
@@ -1892,7 +1976,7 @@ function initializeZipToEpub(showAppToast, toggleAppSpinner) {
   let selectedCoverFile = null;
   let chapters = [];
   let draggedItem = null;
-  if (!zipUploadInput || !createBtn || !zipFileNameEl || !clearZipBtn || !epubTitleInput || !epubAuthorInput || !epubLangInput || !epubCoverImageInput || !epubCoverFileNameEl || !clearCoverBtn || !processMarkdownCheckbox || !chapterArea || !chapterListUl || !zipFileNameWrapper || !epubCoverFileNameWrapper || !statusEl || !downloadSec || !downloadLink) {
+  if (!zipUploadInput || !createBtn || !zipFileNameEl || !clearZipBtn || !epubTitleInput || !epubAuthorInput || !epubLangInput || !epubCoverImageInput || !epubCoverFileNameEl || !clearCoverBtn || !processMarkdownCheckbox || !chapterArea || !chapterListUl || !statusEl || !downloadSec || !downloadLink) {
     console.error("ZIP to EPUB UI elements not found. Initialization failed.");
     return;
   }
@@ -1906,7 +1990,7 @@ function initializeZipToEpub(showAppToast, toggleAppSpinner) {
       selectedZipFile = null;
       zipUploadInput.value = "";
       zipFileNameEl.textContent = "";
-      zipFileNameWrapper.style.display = "none";
+      clearZipBtn.style.display = "none";
       createBtn.disabled = true;
     }
   }
@@ -1986,12 +2070,12 @@ function initializeZipToEpub(showAppToast, toggleAppSpinner) {
     resetUI();
     selectedZipFile = target.files ? target.files[0] : null;
     if (selectedZipFile) {
-      zipFileNameEl.textContent = selectedZipFile.name;
-      zipFileNameWrapper.style.display = "flex";
+      zipFileNameEl.textContent = `Selected ZIP: ${selectedZipFile.name}`;
+      if (clearZipBtn) clearZipBtn.style.display = "inline-block";
       createBtn.disabled = true;
       toggleAppSpinner(true);
       try {
-        const contentZip = await window.JSZip.loadAsync(selectedZipFile);
+        const contentZip = await JSZip.loadAsync(selectedZipFile);
         const chapterPromises = [];
         contentZip.forEach((relativePath, zipEntry) => {
           if (!zipEntry.dir && zipEntry.name.toLowerCase().endsWith(".txt")) {
@@ -2030,18 +2114,18 @@ function initializeZipToEpub(showAppToast, toggleAppSpinner) {
     const target = e.target;
     selectedCoverFile = target.files ? target.files[0] : null;
     if (selectedCoverFile) {
-      epubCoverFileNameEl.textContent = selectedCoverFile.name;
-      epubCoverFileNameWrapper.style.display = "flex";
+      epubCoverFileNameEl.textContent = `Cover: ${selectedCoverFile.name}`;
+      if (clearCoverBtn) clearCoverBtn.style.display = "inline-block";
     } else {
       epubCoverFileNameEl.textContent = "";
-      epubCoverFileNameWrapper.style.display = "none";
+      if (clearCoverBtn) clearCoverBtn.style.display = "none";
     }
   });
   clearCoverBtn.addEventListener("click", () => {
     selectedCoverFile = null;
     epubCoverImageInput.value = "";
     epubCoverFileNameEl.textContent = "";
-    epubCoverFileNameWrapper.style.display = "none";
+    clearCoverBtn.style.display = "none";
   });
   createBtn.addEventListener("click", async () => {
     if (statusEl) statusEl.style.display = "none";
@@ -2080,7 +2164,7 @@ function initializeZipToEpub(showAppToast, toggleAppSpinner) {
     toggleAppSpinner(true);
     if (downloadSec) downloadSec.style.display = "none";
     try {
-      const epubZip = new window.JSZip();
+      const epubZip = new JSZip();
       epubZip.file("mimetype", "application/epub+zip", { compression: "STORE" });
       const containerXML = `<?xml version="1.0" encoding="UTF-8"?>
 <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
@@ -2211,18 +2295,21 @@ p { text-indent: 1.5em; margin-top: 0; margin-bottom: 0.5em; text-align: justify
         mimeType: "application/epub+zip",
         compression: "DEFLATE"
       });
-      const safeFileName = title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "generated_epub";
-      const downloadFilename = `${safeFileName}.epub`;
-      const nativeSaveSucceeded = await saveBlobNative(epubBlob, downloadFilename, "application/epub+zip", showAppToast);
-      if (!nativeSaveSucceeded && downloadLink) {
-        if (downloadLink.href && downloadLink.href.startsWith("blob:")) {
+      if (downloadLink) {
+        const safeFileName = title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "generated_epub";
+        const downloadFilename = `${safeFileName}.epub`;
+        const nativeSaveSucceeded = await saveBlobNative(epubBlob, downloadFilename, "application/epub+zip", showAppToast);
+        if (!nativeSaveSucceeded) {
+          downloadLink.href = URL.createObjectURL(epubBlob);
+          downloadLink.download = downloadFilename;
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
           URL.revokeObjectURL(downloadLink.href);
         }
-        downloadLink.href = URL.createObjectURL(epubBlob);
-        downloadLink.download = downloadFilename;
       }
       if (downloadSec) downloadSec.style.display = "block";
-      statusEl.textContent = `EPUB "${title}" created successfully with ${chapters.length} chapter(s). Your file is ready.`;
+      statusEl.textContent = `EPUB "${title}" created successfully with ${chapters.length} chapter(s). Download started.`;
       statusEl.className = "status success";
       statusEl.style.display = "block";
       showAppToast("EPUB created successfully!");
@@ -2345,6 +2432,19 @@ function sanitizeFilenameForZip(name) {
   sanitized = sanitized.replace(/^[_.-]+|[_.-]+$/g, "");
   sanitized = sanitized.substring(0, 100);
   return sanitized || "file";
+}
+async function triggerDownload2(blob, filename, mimeType, showAppToast) {
+  const nativeSaveSucceeded = await saveBlobNative(blob, filename, mimeType, showAppToast);
+  if (!nativeSaveSucceeded) {
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
 }
 function delay(ms) {
   return new Promise((resolve2) => setTimeout(resolve2, ms));
@@ -2487,7 +2587,6 @@ async function getChapterListFromEpub(zip, updateAppStatus) {
 function initializeEpubToZip(showAppToast, toggleAppSpinner) {
   const fileInput = document.getElementById("epubUploadForTxt");
   const fileNameEl = document.getElementById("epubFileNameForTxt");
-  const fileNameWrapper = document.getElementById("epubFileNameForTxtWrapper");
   const clearFileBtn = document.getElementById("clearEpubUploadForTxt");
   const extractBtn = document.getElementById("extractChaptersBtn");
   const statusEl = document.getElementById("statusMessageEpubToZip");
@@ -2500,7 +2599,7 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
   const chapterListUl = document.getElementById("epubToZipChapterList");
   const selectAllChaptersBtn = document.getElementById("epubToZipSelectAllChapters");
   const deselectAllChaptersBtn = document.getElementById("epubToZipDeselectAllChapters");
-  if (!fileInput || !extractBtn || !enableRemoveLinesToggle || !removeLinesOptionsGroup || !linesToRemoveInput || !fileNameEl || !clearFileBtn || !statusEl || !downloadSec || !downloadLink || !chapterSelectionArea || !chapterListUl || !selectAllChaptersBtn || !deselectAllChaptersBtn || !fileNameWrapper) {
+  if (!fileInput || !extractBtn || !enableRemoveLinesToggle || !removeLinesOptionsGroup || !linesToRemoveInput || !fileNameEl || !clearFileBtn || !statusEl || !downloadSec || !downloadLink || !chapterSelectionArea || !chapterListUl || !selectAllChaptersBtn || !deselectAllChaptersBtn) {
     console.error("EPUB to ZIP UI elements not found.");
     return;
   }
@@ -2543,18 +2642,8 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
       const label = document.createElement("label");
       label.htmlFor = checkbox.id;
       label.textContent = entry.title;
-      const labelWrapper = document.createElement("div");
-      labelWrapper.className = "checkbox-label-wrapper";
-      labelWrapper.style.padding = "0";
-      labelWrapper.appendChild(checkbox);
-      labelWrapper.appendChild(label);
-      li.appendChild(labelWrapper);
-      li.addEventListener("click", (e) => {
-        const target = e.target;
-        if (target.tagName !== "INPUT") {
-          checkbox.checked = !checkbox.checked;
-        }
-      });
+      li.appendChild(checkbox);
+      li.appendChild(label);
       chapterListUl.appendChild(li);
     });
     chapterSelectionArea.style.display = "block";
@@ -2577,7 +2666,7 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
     if (fullReset) {
       fileInput.value = "";
       fileNameEl.textContent = "";
-      fileNameWrapper.style.display = "none";
+      if (clearFileBtn) clearFileBtn.style.display = "none";
     }
     if (enableRemoveLinesToggle) enableRemoveLinesToggle.checked = false;
     if (removeLinesOptionsGroup) removeLinesOptionsGroup.style.display = "none";
@@ -2592,7 +2681,7 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
     resetUIState(false);
     if (!file) {
       fileNameEl.textContent = "";
-      fileNameWrapper.style.display = "none";
+      if (clearFileBtn) clearFileBtn.style.display = "none";
       extractBtn.disabled = true;
       return;
     }
@@ -2600,19 +2689,19 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
       updateLocalStatus("Error: Please select a valid .epub file.", true);
       fileInput.value = "";
       fileNameEl.textContent = "";
-      fileNameWrapper.style.display = "none";
+      if (clearFileBtn) clearFileBtn.style.display = "none";
       extractBtn.disabled = true;
       return;
     }
     currentEpubFilename = file.name;
-    fileNameEl.textContent = file.name;
-    fileNameWrapper.style.display = "flex";
+    fileNameEl.textContent = `Selected: ${file.name}`;
+    if (clearFileBtn) clearFileBtn.style.display = "inline-block";
     updateLocalStatus(`Reading ${file.name}...`);
     toggleAppSpinner(true);
     try {
       const arrayBuffer = await readFileAsArrayBuffer2(file);
       updateLocalStatus("Unzipping EPUB...");
-      currentZipInstance = await window.JSZip.loadAsync(arrayBuffer);
+      currentZipInstance = await JSZip.loadAsync(arrayBuffer);
       updateLocalStatus("Parsing Table of Contents...");
       const chapters = await getChapterListFromEpub(currentZipInstance, updateLocalStatus);
       if (chapters.length > 0) {
@@ -2675,7 +2764,7 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
     extractBtn.disabled = true;
     extractBtn.textContent = "Extracting...";
     toggleAppSpinner(true);
-    const outputZip = new window.JSZip();
+    const outputZip = new JSZip();
     let filesAdded = 0;
     const totalChaptersToProcess = selectedChapters.length;
     try {
@@ -2722,13 +2811,14 @@ function initializeEpubToZip(showAppToast, toggleAppSpinner) {
         const zipBlob = await outputZip.generateAsync({ type: "blob", compression: "DEFLATE" });
         const downloadFilenameBase = currentEpubFilename.replace(/\.epub$/i, "") || "epub_content";
         const finalFilename = `${sanitizeFilenameForZip(downloadFilenameBase)}_chapters.zip`;
-        const nativeSaveSucceeded = await saveBlobNative(zipBlob, finalFilename, "application/zip", showAppToast);
-        if (!nativeSaveSucceeded && downloadLink) {
-          downloadLink.href = URL.createObjectURL(zipBlob);
-          downloadLink.download = finalFilename;
+        await triggerDownload2(zipBlob, finalFilename, "application/zip", showAppToast);
+        updateLocalStatus(`Download started / File saved (${filesAdded}/${totalChaptersToProcess} chapters).`);
+        if (downloadSec && downloadLink) {
+          downloadLink.href = "#";
+          downloadLink.setAttribute("download", finalFilename);
+          downloadLink.textContent = `Download ${finalFilename}`;
+          downloadSec.style.display = "block";
         }
-        updateLocalStatus(`Extraction complete. ${filesAdded}/${totalChaptersToProcess} chapters exported.`, false);
-        if (downloadSec) downloadSec.style.display = "block";
       } else {
         updateLocalStatus("Extraction complete, but no chapter content was retrieved or all content was removed. Check EPUB and options.", true);
       }
@@ -2748,7 +2838,6 @@ init_dist();
 function initializeCreateBackupFromZip(showAppToast, toggleAppSpinner) {
   const zipFileInput = document.getElementById("zipBackupFile");
   const zipFileNameEl = document.getElementById("zipBackupFileName");
-  const zipFileNameWrapper = document.getElementById("zipBackupFileNameWrapper");
   const clearZipFileBtn = document.getElementById("clearZipBackupFile");
   const projectTitleInput = document.getElementById("zipProjectTitle");
   const descriptionInput = document.getElementById("zipDescription");
@@ -2759,7 +2848,7 @@ function initializeCreateBackupFromZip(showAppToast, toggleAppSpinner) {
   const createBtn = document.getElementById("createFromZipBtn");
   const statusMessageEl = document.getElementById("statusMessageCreateBackupFromZip");
   const tooltipTrigger = document.querySelector("#createBackupFromZipApp .tooltip-trigger");
-  if (!zipFileInput || !zipFileNameEl || !clearZipFileBtn || !projectTitleInput || !descriptionInput || !uniqueCodeInput || !chapterPatternInput || !startNumberInput || !extraChaptersInput || !createBtn || !statusMessageEl || !tooltipTrigger || !zipFileNameWrapper) {
+  if (!zipFileInput || !zipFileNameEl || !clearZipFileBtn || !projectTitleInput || !descriptionInput || !uniqueCodeInput || !chapterPatternInput || !startNumberInput || !extraChaptersInput || !createBtn || !statusMessageEl || !tooltipTrigger) {
     console.error("Create Backup from ZIP: One or more UI elements not found. Initialization failed.");
     return;
   }
@@ -2776,17 +2865,17 @@ function initializeCreateBackupFromZip(showAppToast, toggleAppSpinner) {
     createBtn.disabled = !(zipFileInput.files && zipFileInput.files.length > 0);
     if (statusMessageEl) statusMessageEl.style.display = "none";
     if (zipFileInput.files && zipFileInput.files.length > 0) {
-      zipFileNameEl.textContent = zipFileInput.files[0].name;
-      zipFileNameWrapper.style.display = "flex";
+      zipFileNameEl.textContent = `Selected: ${zipFileInput.files[0].name}`;
+      if (clearZipFileBtn) clearZipFileBtn.style.display = "inline-block";
     } else {
       zipFileNameEl.textContent = "";
-      zipFileNameWrapper.style.display = "none";
+      if (clearZipFileBtn) clearZipFileBtn.style.display = "none";
     }
   });
   clearZipFileBtn.addEventListener("click", () => {
     zipFileInput.value = "";
     zipFileNameEl.textContent = "";
-    zipFileNameWrapper.style.display = "none";
+    clearZipFileBtn.style.display = "none";
     createBtn.disabled = true;
     if (statusMessageEl) statusMessageEl.style.display = "none";
   });
@@ -2842,7 +2931,7 @@ function initializeCreateBackupFromZip(showAppToast, toggleAppSpinner) {
     const uniqueCodeProvided = uniqueCodeInput.value.trim();
     const chapterPatternValue = chapterPatternInput.value.trim();
     try {
-      const zip = await window.JSZip.loadAsync(file);
+      const zip = await JSZip.loadAsync(file);
       const scenes = [];
       const sections = [];
       let currentProcessingIndex = 0;
@@ -2978,18 +3067,7 @@ function initializeCreateBackupFromZip(showAppToast, toggleAppSpinner) {
       const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: "application/json" });
       const safeFileNameBase = projectTitle.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_");
       const filename = `${safeFileNameBase || "backup_from_zip"}.json`;
-      const nativeSaveSucceeded = await saveBlobNative(blob, filename, "application/json", showAppToast);
-      if (!nativeSaveSucceeded) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        a.style.display = "none";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }
+      await triggerDownload(blob, filename, "application/json", showAppToast);
       if (statusMessageEl) {
         statusMessageEl.textContent = `Backup file created with ${scenes.length} chapter(s). Download started.`;
         statusMessageEl.className = "status success";
@@ -3113,18 +3191,7 @@ function initializeCreateNewBackup(showAppToast, toggleAppSpinner) {
       const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
       const filenameBase = title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "new_backup";
       const filename = `${filenameBase}.json`;
-      const nativeSaveSucceeded = await saveBlobNative(blob, filename, "application/json", showAppToast);
-      if (!nativeSaveSucceeded) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        a.style.display = "none";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }
+      await triggerDownload(blob, filename, "application/json", showAppToast);
       statusEl.textContent = "Backup file created successfully. Download started.";
       statusEl.className = "status success";
       statusEl.style.display = "block";
@@ -3147,14 +3214,13 @@ function initializeExtendBackup(showAppToast, toggleAppSpinner) {
   const extendBtn = document.getElementById("extendBackupBtn");
   const fileInput = document.getElementById("extendBackupFile");
   const fileNameEl = document.getElementById("extendBackupFileName");
-  const fileNameWrapper = document.getElementById("extendBackupFileNameWrapper");
   const clearFileBtn = document.getElementById("clearExtendBackupFile");
   const extraChaptersInput = document.getElementById("extendExtraChapters");
   const startNumberInput = document.getElementById("extendStartNumber");
   const prefixInput = document.getElementById("extendPrefix");
   const statusEl = document.getElementById("statusExtendBackup");
   const tooltipTrigger = document.querySelector("#extendBackupApp .tooltip-trigger");
-  if (!extendBtn || !fileInput || !fileNameEl || !clearFileBtn || !extraChaptersInput || !startNumberInput || !prefixInput || !statusEl || !tooltipTrigger || !fileNameWrapper) {
+  if (!extendBtn || !fileInput || !fileNameEl || !clearFileBtn || !extraChaptersInput || !startNumberInput || !prefixInput || !statusEl || !tooltipTrigger) {
     console.error("Extend Backup: One or more UI elements not found. Initialization failed.");
     return;
   }
@@ -3169,18 +3235,18 @@ function initializeExtendBackup(showAppToast, toggleAppSpinner) {
   });
   fileInput.addEventListener("change", () => {
     if (fileInput.files && fileInput.files.length > 0) {
-      fileNameEl.textContent = fileInput.files[0].name;
-      fileNameWrapper.style.display = "flex";
+      fileNameEl.textContent = `Selected: ${fileInput.files[0].name}`;
+      if (clearFileBtn) clearFileBtn.style.display = "inline-block";
     } else {
       fileNameEl.textContent = "";
-      fileNameWrapper.style.display = "none";
+      if (clearFileBtn) clearFileBtn.style.display = "none";
     }
     statusEl.style.display = "none";
   });
   clearFileBtn.addEventListener("click", () => {
     fileInput.value = "";
     fileNameEl.textContent = "";
-    fileNameWrapper.style.display = "none";
+    clearFileBtn.style.display = "none";
     statusEl.style.display = "none";
   });
   extendBtn.addEventListener("click", () => {
@@ -3268,18 +3334,7 @@ function initializeExtendBackup(showAppToast, toggleAppSpinner) {
         const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
         const filenameBase = backup.title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "extended_backup";
         const filename = `${filenameBase}.json`;
-        const nativeSaveSucceeded = await saveBlobNative(blob, filename, "application/json", showAppToast);
-        if (!nativeSaveSucceeded) {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = filename;
-          a.style.display = "none";
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }
+        await triggerDownload(blob, filename, "application/json", showAppToast);
         statusEl.textContent = `Backup extended with ${extraChapters} chapter(s). Download started.`;
         statusEl.className = "status success";
         statusEl.style.display = "block";
@@ -3409,14 +3464,13 @@ function initializeMergeBackup(showAppToast, toggleAppSpinner) {
   const mergeBtn = document.getElementById("mergeBackupBtn");
   const filesInput = document.getElementById("mergeBackupFiles");
   const fileNamesEl = document.getElementById("mergeBackupFileNames");
-  const fileNamesArea = document.getElementById("mergeBackupFileNamesArea");
   const clearFilesBtn = document.getElementById("clearMergeBackupFiles");
   const mergedTitleInput = document.getElementById("mergeProjectTitle");
   const mergedDescInput = document.getElementById("mergeDescription");
   const chapterPrefixInput = document.getElementById("mergePrefix");
   const preserveTitlesCheckbox = document.getElementById("mergePreserveTitles");
   const statusEl = document.getElementById("statusMergeBackup");
-  if (!mergeBtn || !filesInput || !fileNamesEl || !clearFilesBtn || !fileNamesArea || !mergedTitleInput || !mergedDescInput || !chapterPrefixInput || !preserveTitlesCheckbox || !statusEl) {
+  if (!mergeBtn || !filesInput || !fileNamesEl || !clearFilesBtn || !mergedTitleInput || !mergedDescInput || !chapterPrefixInput || !preserveTitlesCheckbox || !statusEl) {
     console.error("Merge Backup: One or more UI elements not found. Initialization failed.");
     return;
   }
@@ -3428,11 +3482,9 @@ function initializeMergeBackup(showAppToast, toggleAppSpinner) {
       }
       fileListHtml += "</ul>";
       fileNamesEl.innerHTML = fileListHtml;
-      fileNamesArea.style.display = "block";
       if (clearFilesBtn) clearFilesBtn.style.display = "inline-block";
     } else {
       fileNamesEl.textContent = "No files selected.";
-      fileNamesArea.style.display = "none";
       if (clearFilesBtn) clearFilesBtn.style.display = "none";
     }
     statusEl.style.display = "none";
@@ -3440,7 +3492,6 @@ function initializeMergeBackup(showAppToast, toggleAppSpinner) {
   clearFilesBtn.addEventListener("click", () => {
     filesInput.value = "";
     fileNamesEl.textContent = "No files selected.";
-    fileNamesArea.style.display = "none";
     clearFilesBtn.style.display = "none";
     statusEl.style.display = "none";
   });
@@ -3489,18 +3540,7 @@ function initializeMergeBackup(showAppToast, toggleAppSpinner) {
         const blob = new Blob([JSON.stringify(mergedData, null, 2)], { type: "application/json" });
         const filenameBase = mergedTitle.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "merged_backup";
         const filename = `${filenameBase}.json`;
-        const nativeSaveSucceeded = await saveBlobNative(blob, filename, "application/json", showAppToast);
-        if (!nativeSaveSucceeded) {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = filename;
-          a.style.display = "none";
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }
+        await triggerDownload(blob, filename, "application/json", showAppToast);
         statusEl.textContent = `Backup files merged into "${mergedTitle}". Download started.`;
         statusEl.className = "status success";
         statusEl.style.display = "block";
@@ -3525,11 +3565,9 @@ init_dist();
 function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
   const baseBackupFileInput = document.getElementById("augmentBaseBackupFile");
   const baseBackupFileNameEl = document.getElementById("augmentBaseBackupFileName");
-  const baseBackupFileNameWrapper = document.getElementById("augmentBaseBackupFileNameWrapper");
   const clearBaseBackupFileBtn = document.getElementById("clearAugmentBaseBackupFile");
   const zipFileInput = document.getElementById("augmentZipFile");
   const zipFileNameEl = document.getElementById("augmentZipFileName");
-  const zipFileNameWrapper = document.getElementById("augmentZipFileNameWrapper");
   const clearZipFileBtn = document.getElementById("clearAugmentZipFile");
   const prefixInput = document.getElementById("augmentPrefix");
   const preserveTxtTitlesCheckbox = document.getElementById("augmentPreserveTxtTitles");
@@ -3537,7 +3575,7 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
   const statusEl = document.getElementById("statusAugmentBackup");
   let selectedBaseFile = null;
   let selectedZipFile = null;
-  if (!baseBackupFileInput || !baseBackupFileNameEl || !clearBaseBackupFileBtn || !baseBackupFileNameWrapper || !zipFileInput || !zipFileNameEl || !clearZipFileBtn || !zipFileNameWrapper || !prefixInput || !preserveTxtTitlesCheckbox || !augmentBtn || !statusEl) {
+  if (!baseBackupFileInput || !baseBackupFileNameEl || !clearBaseBackupFileBtn || !zipFileInput || !zipFileNameEl || !clearZipFileBtn || !prefixInput || !preserveTxtTitlesCheckbox || !augmentBtn || !statusEl) {
     console.error("Augment Backup with ZIP: One or more UI elements not found. Initialization failed.");
     return;
   }
@@ -3547,11 +3585,11 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
   baseBackupFileInput.addEventListener("change", (e) => {
     selectedBaseFile = e.target.files?.[0] || null;
     if (selectedBaseFile) {
-      baseBackupFileNameEl.textContent = selectedBaseFile.name;
-      baseBackupFileNameWrapper.style.display = "flex";
+      baseBackupFileNameEl.textContent = `Selected: ${selectedBaseFile.name}`;
+      clearBaseBackupFileBtn.style.display = "inline-block";
     } else {
       baseBackupFileNameEl.textContent = "";
-      baseBackupFileNameWrapper.style.display = "none";
+      clearBaseBackupFileBtn.style.display = "none";
     }
     statusEl.style.display = "none";
     checkEnableButton();
@@ -3560,18 +3598,18 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
     baseBackupFileInput.value = "";
     selectedBaseFile = null;
     baseBackupFileNameEl.textContent = "";
-    baseBackupFileNameWrapper.style.display = "none";
+    clearBaseBackupFileBtn.style.display = "none";
     statusEl.style.display = "none";
     checkEnableButton();
   });
   zipFileInput.addEventListener("change", (e) => {
     selectedZipFile = e.target.files?.[0] || null;
     if (selectedZipFile) {
-      zipFileNameEl.textContent = selectedZipFile.name;
-      zipFileNameWrapper.style.display = "flex";
+      zipFileNameEl.textContent = `Selected: ${selectedZipFile.name}`;
+      clearZipFileBtn.style.display = "inline-block";
     } else {
       zipFileNameEl.textContent = "";
-      zipFileNameWrapper.style.display = "none";
+      clearZipFileBtn.style.display = "none";
     }
     statusEl.style.display = "none";
     checkEnableButton();
@@ -3580,7 +3618,7 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
     zipFileInput.value = "";
     selectedZipFile = null;
     zipFileNameEl.textContent = "";
-    zipFileNameWrapper.style.display = "none";
+    clearZipFileBtn.style.display = "none";
     statusEl.style.display = "none";
     checkEnableButton();
   });
@@ -3618,7 +3656,7 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
         throw new Error("Base backup file has an invalid or incomplete structure.");
       }
       const currentRevision = backupData.revisions[0];
-      const zip = await window.JSZip.loadAsync(selectedZipFile);
+      const zip = await JSZip.loadAsync(selectedZipFile);
       const chapterFilePromises = [];
       zip.forEach((relativePath, zipEntry) => {
         if (!zipEntry.dir && zipEntry.name.toLowerCase().endsWith(".txt")) {
@@ -3743,18 +3781,7 @@ function initializeAugmentBackupWithZip(showAppToast, toggleAppSpinner) {
       const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: "application/json" });
       const safeFileNameBase = backupData.title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_");
       const filename = `${safeFileNameBase || "augmented_backup"}.json`;
-      const nativeSaveSucceeded = await saveBlobNative(blob, filename, "application/json", showAppToast);
-      if (!nativeSaveSucceeded) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        a.style.display = "none";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }
+      await triggerDownload(blob, filename, "application/json", showAppToast);
       statusEl.textContent = `Backup augmented with ${chapterFiles.length} chapter(s) from ZIP. Download started.`;
       statusEl.className = "status success";
       statusEl.style.display = "block";
@@ -3923,7 +3950,6 @@ function performInitialFind(findPatternValue, useRegexValue, caseSensitiveValue,
 function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
   const frBackupFileInput = document.getElementById("frBackupFile");
   const frBackupFileNameEl = document.getElementById("frBackupFileName");
-  const frBackupFileNameWrapper = document.getElementById("frBackupFileNameWrapper");
   const clearFrBackupFileBtn = document.getElementById("clearFrBackupFile");
   const findPatternInput = document.getElementById("findPattern");
   const useRegexCheckbox = document.getElementById("useRegexBackup");
@@ -3940,7 +3966,7 @@ function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
   const matchBlockIndexEl = document.getElementById("frMatchBlockIndex");
   const matchCountDisplayEl = document.getElementById("frMatchCountDisplay");
   const statusEl = document.getElementById("statusFindReplaceBackup");
-  if (!frBackupFileInput || !frBackupFileNameEl || !clearFrBackupFileBtn || !frBackupFileNameWrapper || !findPatternInput || !useRegexCheckbox || !caseSensitiveCheckbox || !wholeWordCheckbox || !replaceTextInput || !findNextBtn || !findPreviousBtn || !replaceNextBtn || !replaceAllBtn || !downloadCurrentFrBackupBtn || !currentMatchDisplay || !matchSceneTitleEl || !matchBlockIndexEl || !matchCountDisplayEl || !statusEl) {
+  if (!frBackupFileInput || !frBackupFileNameEl || !clearFrBackupFileBtn || !findPatternInput || !useRegexCheckbox || !caseSensitiveCheckbox || !wholeWordCheckbox || !replaceTextInput || !findNextBtn || !findPreviousBtn || !replaceNextBtn || !replaceAllBtn || !downloadCurrentFrBackupBtn || !currentMatchDisplay || !matchSceneTitleEl || !matchBlockIndexEl || !matchCountDisplayEl || !statusEl) {
     console.error("Find & Replace Backup: One or more UI elements not found. Initialization failed.");
     return;
   }
@@ -3960,11 +3986,11 @@ function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
     resetFrState(true);
     if (!target.files || !target.files.length) {
       frBackupFileNameEl.textContent = "";
-      frBackupFileNameWrapper.style.display = "none";
+      if (clearFrBackupFileBtn) clearFrBackupFileBtn.style.display = "none";
       return;
     }
-    frBackupFileNameEl.textContent = target.files[0].name;
-    frBackupFileNameWrapper.style.display = "flex";
+    frBackupFileNameEl.textContent = `Selected: ${target.files[0].name}`;
+    if (clearFrBackupFileBtn) clearFrBackupFileBtn.style.display = "inline-block";
     toggleAppSpinner(true);
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -3984,7 +4010,7 @@ function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
         }
         resetFrState(true);
         frBackupFileNameEl.textContent = "";
-        frBackupFileNameWrapper.style.display = "none";
+        if (clearFrBackupFileBtn) clearFrBackupFileBtn.style.display = "none";
         frBackupFileInput.value = "";
       } finally {
         toggleAppSpinner(false);
@@ -3999,7 +4025,7 @@ function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
       }
       resetFrState(true);
       frBackupFileNameEl.textContent = "";
-      frBackupFileNameWrapper.style.display = "none";
+      if (clearFrBackupFileBtn) clearFrBackupFileBtn.style.display = "none";
       frBackupFileInput.value = "";
       toggleAppSpinner(false);
     };
@@ -4008,7 +4034,7 @@ function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
   clearFrBackupFileBtn.addEventListener("click", () => {
     frBackupFileInput.value = "";
     frBackupFileNameEl.textContent = "";
-    frBackupFileNameWrapper.style.display = "none";
+    clearFrBackupFileBtn.style.display = "none";
     resetFrState(true);
   });
   useRegexCheckbox.addEventListener("change", () => {
@@ -4180,18 +4206,7 @@ function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
       if (rev) rev.date = now;
       const blob = new Blob([JSON.stringify(frData, null, 2)], { type: "application/json" });
       const filename = `${frData.title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "replaced_backup"}.json`;
-      const nativeSaveSucceeded = await saveBlobNative(blob, filename, "application/json", showAppToast);
-      if (!nativeSaveSucceeded) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        a.style.display = "none";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }
+      await triggerDownload(blob, filename, "application/json", showAppToast);
       showAppToast(`Replace All complete. ${totalReplacementsMade} replacement(s) made. Download started.`);
       resetFrState(false);
     } catch (err) {
@@ -4218,18 +4233,7 @@ function initializeFindReplaceBackup(showAppToast, toggleAppSpinner) {
       }
       const blob = new Blob([JSON.stringify(frData, null, 2)], { type: "application/json" });
       const filename = `${frData.title.replace(/[^a-z0-9_\-\s]/gi, "_").replace(/\s+/g, "_") || "current_backup"}_current.json`;
-      const nativeSaveSucceeded = await saveBlobNative(blob, filename, "application/json", showAppToast);
-      if (!nativeSaveSucceeded) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        a.style.display = "none";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }
+      await triggerDownload(blob, filename, "application/json", showAppToast);
       showAppToast(`Current backup download started: ${filename}`);
       if (statusEl) {
         statusEl.textContent = `Current backup download started: ${filename}`;
@@ -4291,6 +4295,12 @@ var toolSectionsMap = {
   "augmentBackupWithZip": { elementId: "augmentBackupWithZipApp", title: "Augment Backup with ZIP" },
   "findReplaceBackup": { elementId: "findReplaceBackupApp", title: "Find & Replace in Backup File" }
 };
+window.toggleMenu = () => {
+  if (Capacitor.isNativePlatform()) {
+    Haptics.impact({ style: ImpactStyle.Light });
+  }
+  toggleMenu();
+};
 window.launchAppFromCard = (appId) => {
   if (Capacitor.isNativePlatform()) {
     Haptics.impact({ style: ImpactStyle.Light });
@@ -4333,14 +4343,17 @@ function initializeApp() {
   initializeMergeBackup(showToast, (show) => toggleSpinner(spinnerMergeBackupEl, show));
   initializeAugmentBackupWithZip(showToast, (show) => toggleSpinner(spinnerAugmentBackupEl, show));
   initializeFindReplaceBackup(showToast, (show) => toggleSpinner(spinnerFindReplaceBackupEl, show));
-  document.getElementById("backButton")?.addEventListener("click", () => {
-    window.showDashboard();
-  });
+  document.addEventListener("touchstart", handleTouchStart, { passive: true });
+  document.addEventListener("touchmove", handleTouchMove, { passive: false });
+  document.addEventListener("touchend", handleTouchEnd);
   if (Capacitor.isNativePlatform()) {
     StatusBar.setStyle({ style: Style.Dark }).catch((err) => console.error("StatusBar.setStyle error:", err));
-    StatusBar.setBackgroundColor({ color: "#1e1e1e" }).catch((err) => console.error("StatusBar.setBackgroundColor error:", err));
+    StatusBar.setBackgroundColor({ color: "#111111" }).catch((err) => console.error("StatusBar.setBackgroundColor error:", err));
     App.addListener("backButton", ({ canGoBack }) => {
-      if (document.body.classList.contains("tool-active")) {
+      const sidebarEl2 = document.getElementById("sidebar");
+      if (sidebarEl2?.classList.contains("open")) {
+        toggleMenu();
+      } else if (window.location.hash !== "#dashboard" && window.location.hash !== "") {
         showDashboard(false, toolSectionsMap);
       } else {
         App.exitApp();
@@ -4410,21 +4423,7 @@ function initializeApp() {
 
 // index.tsx
 document.addEventListener("DOMContentLoaded", () => {
-  const checkInterval = 100;
-  let checkCount = 0;
-  const maxChecks = 50;
-  const checkJSZipAndInit = () => {
-    if (window.JSZip) {
-      console.log("JSZip library is loaded. Initializing the application.");
-      initializeApp();
-    } else if (checkCount < maxChecks) {
-      checkCount++;
-      setTimeout(checkJSZipAndInit, checkInterval);
-    } else {
-      console.error("Fatal: Could not load the JSZip library. The application cannot start.");
-    }
-  };
-  checkJSZipAndInit();
+  initializeApp();
 });
 /**
  * @license
